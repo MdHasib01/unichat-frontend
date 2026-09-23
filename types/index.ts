@@ -179,9 +179,18 @@ export interface Conversation {
   assignments: Array<{ assignee: MiniUser | null }>;
 }
 
-export interface ConversationDetail extends Omit<Conversation, 'contact' | 'assignments'> {
+export interface ConversationDetail
+  extends Omit<Conversation, 'contact' | 'assignments' | 'socialAccount'> {
   subject: string | null;
   contact: Contact;
+  /** The detail endpoint also returns whether the channel is still live. */
+  socialAccount: {
+    id: string;
+    name: string;
+    platform: Platform;
+    avatarUrl: string | null;
+    isActive: boolean;
+  } | null;
   assignments: Array<{ id: string; assignee: MiniUser | null }>;
   aiSessions: Array<{ id: string; replyCount: number; handedOff: boolean; lastConfidence: number | null }>;
 }
