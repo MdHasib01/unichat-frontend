@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Unichat light theme — white/neutral surfaces, indigo accent. */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 243 75% 96%;
+    --accent-foreground: 243 75% 40%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 26 83% 14%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 243 75% 59%;
+
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 222 30% 28%;
+    --sidebar-accent: 243 75% 97%;
+    --sidebar-border: 214 32% 91%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 40% 11%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 243 75% 66%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 243 45% 22%;
+    --accent-foreground: 243 90% 88%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 55%;
+    --warning-foreground: 26 83% 14%;
+
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 243 75% 66%;
+
+    --sidebar: 222 44% 9%;
+    --sidebar-foreground: 215 20% 72%;
+    --sidebar-accent: 243 45% 20%;
+    --sidebar-border: 217 33% 18%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Compact, unobtrusive scrollbars inside the app shell. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-xl border border-border bg-card shadow-card;
+  }
+
+  .section-heading {
+    @apply text-sm font-semibold tracking-tight text-foreground;
+  }
+
+  /* Chat bubbles: inbound sits left in a neutral surface, outbound right in
+     the brand colour, AI replies get a distinct tint. */
+  .bubble {
+    @apply max-w-[min(34rem,78%)] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm leading-relaxed;
+  }
+  .bubble-in {
+    @apply rounded-bl-md bg-secondary text-secondary-foreground;
+  }
+  .bubble-out {
+    @apply rounded-br-md bg-primary text-primary-foreground;
+  }
+  .bubble-ai {
+    @apply rounded-br-md border border-primary/25 bg-accent text-accent-foreground;
+  }
+  .bubble-note {
+    @apply w-full max-w-full border border-warning/30 bg-warning/10 text-foreground;
+  }
+}
