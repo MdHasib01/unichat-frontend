@@ -7,7 +7,7 @@ import { PageContainer, PageHeader } from '@/components/layout/app-shell';
 
 const TABS = [
   { label: 'AI Setup', href: '/ai-training/setup' },
-  { label: 'Train Content', href: '/ai-training/train-content' },
+  { label: 'Train Messages', href: '/ai-training/train-content' },
   { label: 'Knowledge', href: '/ai-training/knowledge' },
   { label: 'Test', href: '/ai-training/test' },
 ];

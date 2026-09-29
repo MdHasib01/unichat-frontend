@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   AlertCircle,
   Bot,
@@ -10,16 +10,21 @@ import {
   Clock,
   Download,
   FileText,
+  RotateCcw,
+  GraduationCap,
   MapPin,
   StickyNote,
   Zap,
 } from 'lucide-react';
 import { format, isSameDay } from 'date-fns';
-import { get } from '@/services/api';
+import { get, post } from '@/services/api';
+import { toast } from 'sonner';
 import { queryKeys } from '@/lib/query-keys';
 import { cn, formatDateTime } from '@/lib/utils';
 import { Badge, Skeleton, Tooltip, UserAvatar } from '@/components/ui/primitives';
 import { EmptyState } from '@/components/shared/states';
+import { useSession } from '@/hooks/use-session';
+import { TeachAIDialog, type TeachDraft } from './teach-ai-dialog';
 import type { Attachment, Message } from '@/types';
 
 export function MessageThread({ conversationId }: { conversationId: string }) {
@@ -31,6 +36,55 @@ export function MessageThread({ conversationId }: { conversationId: string }) {
   });
 
   const messages = React.useMemo(() => data ?? [], [data]);
+  const { can } = useSession();
+  const canTrain = can('ai.train');
+  const [teach, setTeach] = React.useState<TeachDraft | null>(null);
+  const queryClient = useQueryClient();
+
+  const retry = useMutation({
+    mutationFn: (messageId: string) =>
+      post<Message>(`/conversations/${conversationId}/messages/${messageId}/retry`),
+    onSuccess: (message) => {
+      if (message.status === 'FAILED') {
+        toast.error('Still not delivered', { description: message.errorMessage ?? undefined });
+      } else {
+        toast.success(message.status === 'QUEUED' ? 'Sending again…' : 'Delivered');
+      }
+    },
+    onError: (error: Error) => toast.error(error.message),
+    onSettled: () => void queryClient.invalidateQueries({ queryKey: queryKeys.messages(conversationId) }),
+  });
+
+  /**
+   * Builds a training pair around one message: the customer's unanswered
+   * run of messages is the question, and the next reply (or the AI reply
+   * itself, when improving one) is the answer.
+   */
+  const teachFrom = React.useCallback(
+    (index: number) => {
+      const visible = (m: Message) => !m.isInternal && m.type !== 'NOTE' && Boolean(m.body);
+      const target = messages[index];
+      const improving = target.direction === 'OUTBOUND';
+
+      // The customer's messages leading up to this point.
+      let end = improving ? index - 1 : index;
+      while (end >= 0 && !(messages[end].direction === 'INBOUND' && visible(messages[end]))) end -= 1;
+      let start = end;
+      while (start - 1 >= 0 && (messages[start - 1].direction === 'INBOUND' || !visible(messages[start - 1]))) start -= 1;
+      const question = messages
+        .slice(Math.max(start, 0), end + 1)
+        .filter((m) => m.direction === 'INBOUND' && visible(m))
+        .map((m) => m.body)
+        .join('\n');
+
+      const answer = improving
+        ? target.body ?? ''
+        : messages.slice(index + 1).find((m) => m.direction === 'OUTBOUND' && visible(m))?.body ?? '';
+
+      setTeach({ conversationId, messageId: target.id, question, answer, mode: improving ? 'improve' : 'teach' });
+    },
+    [messages, conversationId],
+  );
 
   // Stick to the newest message as the thread grows (including live arrivals).
   React.useEffect(() => {
@@ -70,11 +124,17 @@ export function MessageThread({ conversationId }: { conversationId: string }) {
         return (
           <React.Fragment key={message.id}>
             {showDate ? <DateDivider date={message.createdAt} /> : null}
-            <MessageBubble message={message} previous={previous} />
+            <MessageBubble
+              message={message}
+              previous={previous}
+              onTeach={canTrain ? () => teachFrom(index) : undefined}
+              onRetry={retry.isPending ? undefined : () => retry.mutate(message.id)}
+            />
           </React.Fragment>
         );
       })}
       <div ref={bottomRef} />
+      <TeachAIDialog draft={teach} onClose={() => setTeach(null)} />
     </div>
   );
 }
@@ -91,7 +151,17 @@ function DateDivider({ date }: { date: string }) {
   );
 }
 
-function MessageBubble({ message, previous }: { message: Message; previous?: Message }) {
+function MessageBubble({
+  message,
+  previous,
+  onTeach,
+  onRetry,
+}: {
+  message: Message;
+  previous?: Message;
+  onTeach?: () => void;
+  onRetry?: () => void;
+}) {
   const outbound = message.direction === 'OUTBOUND';
   const isNote = message.isInternal || message.type === 'NOTE';
   const isAI = message.senderType === 'AI';
@@ -127,7 +197,7 @@ function MessageBubble({ message, previous }: { message: Message; previous?: Mes
   }
 
   return (
-    <div className={cn('flex gap-2', outbound ? 'justify-end' : 'justify-start', grouped ? 'mt-0.5' : 'mt-3')}>
+    <div className={cn('group flex gap-2', outbound ? 'justify-end' : 'justify-start', grouped ? 'mt-0.5' : 'mt-3')}>
       {!outbound && !grouped ? (
         <UserAvatar
           name={message.contact?.displayName}
@@ -173,12 +243,35 @@ function MessageBubble({ message, previous }: { message: Message; previous?: Mes
           {message.user && !isAI && !isAutomation ? (
             <span className="truncate">· {message.user.firstName}</span>
           ) : null}
+
+          {onTeach && message.body && (!outbound || isAI) ? (
+            <button
+              type="button"
+              onClick={onTeach}
+              className="ml-1 inline-flex items-center gap-1 rounded px-1 text-primary opacity-0 transition-opacity hover:underline focus-visible:opacity-100 group-hover:opacity-100"
+            >
+              <GraduationCap className="h-3 w-3" />
+              {outbound ? 'Improve answer' : 'Teach AI'}
+            </button>
+          ) : null}
         </div>
 
-        {message.status === 'FAILED' && message.errorMessage ? (
+        {message.status === 'FAILED' && outbound ? (
           <p className="flex max-w-sm items-start gap-1 px-1 text-2xs text-destructive">
             <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" />
-            {message.errorMessage}
+            <span>
+              Not delivered — the customer has not received this. {message.errorMessage}
+              {onRetry ? (
+                <button
+                  type="button"
+                  onClick={onRetry}
+                  className="ml-1.5 inline-flex items-center gap-0.5 font-medium text-primary hover:underline"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Retry
+                </button>
+              ) : null}
+            </span>
           </p>
         ) : null}
       </div>

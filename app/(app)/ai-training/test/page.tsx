@@ -225,7 +225,11 @@ function ExchangeBlock({ exchange }: { exchange: Exchange }) {
               <Badge variant="secondary">Would wait for an agent</Badge>
             )}
 
-            <Badge variant="muted">{result.tokensUsed} tokens</Badge>
+            {result.exactMatch ? (
+              <Badge variant="success">Approved answer · exact match, no AI cost</Badge>
+            ) : (
+              <Badge variant="muted">{result.tokensUsed} tokens</Badge>
+            )}
           </div>
 
           {result.sources.length ? (
@@ -236,18 +240,23 @@ function ExchangeBlock({ exchange }: { exchange: Exchange }) {
               <div className="flex flex-wrap gap-1.5">
                 {result.sources.map((source) => (
                   <span
-                    key={source.documentId}
-                    className="rounded-full bg-card px-2 py-0.5 text-2xs"
+                    key={`${source.type}:${source.id}`}
+                    className={cn(
+                      'rounded-full px-2 py-0.5 text-2xs',
+                      source.type === 'training' ? 'bg-primary/10 text-primary' : 'bg-card',
+                    )}
                     title={`Relevance ${Math.round(source.score * 100)}%`}
                   >
-                    {source.title} · {Math.round(source.score * 100)}%
+                    {source.type === 'training' ? 'Approved answer: ' : ''}
+                    {source.title.length > 60 ? `${source.title.slice(0, 60)}…` : source.title} ·{' '}
+                    {Math.round(source.score * 100)}%
                   </span>
                 ))}
               </div>
             </div>
           ) : (
             <p className="text-2xs text-muted-foreground">
-              No matching knowledge — consider adding a topic that covers this question.
+              No matching knowledge — add a topic under Knowledge, or an approved answer under Train Messages.
             </p>
           )}
         </div>

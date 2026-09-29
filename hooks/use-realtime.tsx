@@ -24,6 +24,8 @@ interface RealtimeContextValue {
   subscribeToConversation: (conversationId: string) => void;
   unsubscribeFromConversation: (conversationId: string) => void;
   sendTyping: (conversationId: string) => void;
+  /** Conversations whose customer is typing right now. */
+  typingContacts: ReadonlySet<string>;
 }
 
 const RealtimeContext = React.createContext<RealtimeContextValue>({
@@ -32,7 +34,28 @@ const RealtimeContext = React.createContext<RealtimeContextValue>({
   subscribeToConversation: () => {},
   unsubscribeFromConversation: () => {},
   sendTyping: () => {},
+  typingContacts: new Set(),
 });
+
+const TYPING_THROTTLE_MS = 3_000;
+const TYPING_VISIBLE_MS = 6_000;
+
+/**
+ * Where the Socket.IO server lives.
+ *
+ * In production Nginx routes /socket.io to the backend on the same origin. The
+ * Next dev server only proxies /api (it cannot forward WebSocket upgrades), so
+ * in development the browser connects to the backend directly. Auth cookies
+ * still go along: they are host-only, and ports don't separate cookies.
+ */
+function socketUrl(): string {
+  if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    const port = process.env.NEXT_PUBLIC_BACKEND_PORT || '4000';
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
+  }
+  return '/';
+}
 
 /**
  * Keeps the inbox live (spec section 30). The socket authenticates with the
@@ -49,12 +72,14 @@ export function RealtimeProvider({
   const queryClient = useQueryClient();
   const [connected, setConnected] = React.useState(false);
   const socketRef = React.useRef<Socket | null>(null);
+  const lastTypingSent = React.useRef(new Map<string, number>());
+  const typingTimers = React.useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const [typingContacts, setTypingContacts] = React.useState<ReadonlySet<string>>(new Set());
 
   React.useEffect(() => {
     if (!enabled) return undefined;
 
-    const url = process.env.NEXT_PUBLIC_SOCKET_URL || undefined;
-    const socket = io(url ?? '/', {
+    const socket = io(socketUrl(), {
       path: '/socket.io',
       withCredentials: true,
       transports: ['websocket', 'polling'],
@@ -105,6 +130,35 @@ export function RealtimeProvider({
       toast(notification.title, { description: notification.body ?? undefined });
     });
 
+    // Website visitors (and other channels that report it) typing.
+    socket.on(REALTIME_EVENTS.TYPING, (payload: { conversationId: string; contact?: boolean }) => {
+      if (!payload?.contact) return;
+      const id = payload.conversationId;
+      setTypingContacts((current) => (current.has(id) ? current : new Set(current).add(id)));
+      clearTimeout(typingTimers.current.get(id));
+      typingTimers.current.set(
+        id,
+        setTimeout(() => {
+          setTypingContacts((current) => {
+            const next = new Set(current);
+            next.delete(id);
+            return next;
+          });
+        }, TYPING_VISIBLE_MS),
+      );
+    });
+
+    // A new customer message ends their typing.
+    socket.on(REALTIME_EVENTS.MESSAGE_CREATED, (message: Message) => {
+      if (message.direction !== 'INBOUND') return;
+      setTypingContacts((current) => {
+        if (!current.has(message.conversationId)) return current;
+        const next = new Set(current);
+        next.delete(message.conversationId);
+        return next;
+      });
+    });
+
     socket.on(REALTIME_EVENTS.INTEGRATION_UPDATED, () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.integrations });
     });
@@ -122,9 +176,15 @@ export function RealtimeProvider({
       connected,
       subscribeToConversation: (id) => socketRef.current?.emit('conversation:subscribe', id),
       unsubscribeFromConversation: (id) => socketRef.current?.emit('conversation:unsubscribe', id),
-      sendTyping: (id) => socketRef.current?.emit('conversation:typing', id),
+      sendTyping: (id) => {
+        const now = Date.now();
+        if (now - (lastTypingSent.current.get(id) ?? 0) < TYPING_THROTTLE_MS) return;
+        lastTypingSent.current.set(id, now);
+        socketRef.current?.emit('conversation:typing', id);
+      },
+      typingContacts,
     }),
-    [connected],
+    [connected, typingContacts],
   );
 
   return <RealtimeContext.Provider value={value}>{children}</RealtimeContext.Provider>;

@@ -52,6 +52,7 @@ import {
 import { PlatformIcon, PLATFORM_META } from '@/components/shared/platform';
 import { EmptyState } from '@/components/shared/states';
 import { STATUS_VARIANTS } from '@/components/shared/data-table';
+import { WebsiteChatCard } from '@/features/webchat/website-chat-card';
 import type { AvailableAccounts, IntegrationsPayload, SocialAccount } from '@/types';
 
 export default function IntegrationsPage() {
@@ -272,6 +273,8 @@ function IntegrationsContent() {
               )}
             </CardContent>
           </Card>
+
+          <WebsiteChatCard canManage={manage} />
 
           <WebhookActivity />
         </div>

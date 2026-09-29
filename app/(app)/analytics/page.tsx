@@ -40,6 +40,7 @@ const PLATFORM_COLORS: Record<string, string> = {
   FACEBOOK: '#1877f2',
   INSTAGRAM: '#d62976',
   WHATSAPP: '#25d366',
+  WEBCHAT: '#4f46e5',
 };
 
 export default function InsightsPage() {

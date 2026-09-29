@@ -109,7 +109,7 @@ function LoginForm() {
         <p className="font-medium text-foreground">Demo workspace</p>
         <p className="mt-1">
           After running the seed, sign in as <code className="font-mono">owner@demo.unichat.app</code>{' '}
-          with the password <code className="font-mono">Unichat2025!</code>
+          with the password <code className="font-mono">Unichat2026!</code>
         </p>
       </div>
     </div>

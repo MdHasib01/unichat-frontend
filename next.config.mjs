@@ -17,6 +17,11 @@ const nextConfig = {
         source: '/api/:path*',
         destination: `${process.env.BACKEND_INTERNAL_URL || 'http://localhost:4000'}/api/:path*`,
       },
+      {
+        // Uploaded files (e.g. website chat logos) live on the backend.
+        source: '/uploads/:path*',
+        destination: `${process.env.BACKEND_INTERNAL_URL || 'http://localhost:4000'}/uploads/:path*`,
+      },
     ];
   },
 };

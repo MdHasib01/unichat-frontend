@@ -10,7 +10,7 @@ import type { Pagination } from '@/types';
 
 export interface Column<T> {
   key: string;
-  header: string;
+  header: React.ReactNode;
   /** Rendered cell. Keep it a node so tables stay declarative. */
   cell: (row: T) => React.ReactNode;
   className?: string;

@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/overlays';
-import { PlatformDot } from '@/components/shared/platform';
+import { PLATFORM_META, PlatformDot } from '@/components/shared/platform';
 import { EmptyState } from '@/components/shared/states';
 import type { Conversation, ConversationCounts, ConversationStatus, MessagingPlatform, Tag } from '@/types';
 
@@ -120,13 +120,13 @@ export function ConversationList({
 
             <DropdownMenuContent align="end" className="w-52">
               <DropdownMenuLabel>Channel</DropdownMenuLabel>
-              {(['all', 'FACEBOOK', 'INSTAGRAM', 'WHATSAPP'] as const).map((platform) => (
+              {(['all', 'FACEBOOK', 'INSTAGRAM', 'WHATSAPP', 'WEBCHAT'] as const).map((platform) => (
                 <DropdownMenuItem
                   key={platform}
                   onSelect={() => onFiltersChange({ ...filters, platform })}
                   className={cn(filters.platform === platform && 'bg-secondary')}
                 >
-                  {platform === 'all' ? 'All channels' : platform.charAt(0) + platform.slice(1).toLowerCase()}
+                  {platform === 'all' ? 'All channels' : PLATFORM_META[platform].label}
                 </DropdownMenuItem>
               ))}
 

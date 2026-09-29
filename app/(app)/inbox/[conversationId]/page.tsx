@@ -18,7 +18,7 @@ import { get, patch, post } from '@/services/api';
 import { queryKeys } from '@/lib/query-keys';
 import { cn } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
-import { useConversationSubscription } from '@/hooks/use-realtime';
+import { useConversationSubscription, useRealtime } from '@/hooks/use-realtime';
 import { Button } from '@/components/ui/button';
 import { Badge, Skeleton, UserAvatar } from '@/components/ui/primitives';
 import {
@@ -205,6 +205,7 @@ export default function ConversationPage() {
         ) : null}
 
         <MessageThread conversationId={conversationId} />
+        <CustomerTyping conversationId={conversationId} name={conversation.contact.displayName} />
 
         <Composer
           conversationId={conversationId}
@@ -222,5 +223,21 @@ export default function ConversationPage() {
         <ContactPanel conversation={conversation} />
       </div>
     </div>
+  );
+}
+
+/** "Jane is typing…" — reported live by channels that support it (website chat). */
+function CustomerTyping({ conversationId, name }: { conversationId: string; name: string }) {
+  const { typingContacts } = useRealtime();
+  if (!typingContacts.has(conversationId)) return null;
+  return (
+    <p className="flex items-center gap-1.5 px-6 pb-1 text-xs text-muted-foreground" aria-live="polite">
+      <span className="inline-flex gap-0.5">
+        <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.2s]" />
+        <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.1s]" />
+        <span className="h-1 w-1 animate-bounce rounded-full bg-muted-foreground" />
+      </span>
+      {name} is typing…
+    </p>
   );
 }

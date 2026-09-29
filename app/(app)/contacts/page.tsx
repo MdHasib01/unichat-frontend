@@ -186,6 +186,7 @@ export default function ContactsPage() {
                 <SelectItem value="FACEBOOK">Messenger</SelectItem>
                 <SelectItem value="INSTAGRAM">Instagram</SelectItem>
                 <SelectItem value="WHATSAPP">WhatsApp</SelectItem>
+                <SelectItem value="WEBCHAT">Website</SelectItem>
               </SelectContent>
             </Select>
 

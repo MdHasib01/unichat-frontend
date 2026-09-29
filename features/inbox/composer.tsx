@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/overlays';
 import { useRealtime } from '@/hooks/use-realtime';
-import type { Attachment, MessageTemplate } from '@/types';
+import type { Attachment, Message, MessageTemplate } from '@/types';
 
 const EMOJIS = [
   '😊', '👍', '🙏', '🎉', '❤️', '😂', '🔥', '✅', '👋', '🤝',
@@ -56,13 +56,20 @@ export function Composer({
 
   const sendMessage = useMutation({
     mutationFn: () =>
-      post(`/conversations/${conversationId}/messages`, {
+      post<Message>(`/conversations/${conversationId}/messages`, {
         body: body.trim() || undefined,
         attachments: attachments.length ? attachments : undefined,
       }),
-    onSuccess: () => {
+    onSuccess: (message) => {
       setBody('');
       setAttachments([]);
+      // The thread shows the real delivery state; say it out loud when the
+      // customer did not get the message.
+      if (message?.status === 'FAILED') {
+        toast.error('Not delivered — the customer has not received this message', {
+          description: message.errorMessage ?? 'You can retry it from the conversation.',
+        });
+      }
       void queryClient.invalidateQueries({ queryKey: queryKeys.messages(conversationId) });
       void queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
@@ -235,7 +242,8 @@ export function Composer({
           value={body}
           onChange={(event) => {
             setBody(event.target.value);
-            sendTyping(conversationId);
+            // Internal notes are private — never show the customer "typing…".
+            if (!noteMode) sendTyping(conversationId);
           }}
           onKeyDown={handleKeyDown}
           placeholder={noteMode ? 'Write a note only your team can see…' : 'Type a message…'}

@@ -370,13 +370,32 @@ export default function AISetupPage() {
               </div>
             ) : null}
 
-            <FormField label="Model">
+            <FormField
+              label="Model"
+              hint={
+                form.provider === 'anthropic'
+                  ? 'Claude Opus 5.5 gives the best answers; Sonnet 5.5 and Haiku 4.5 are faster and cheaper. Claude sizes its own replies, so the creativity and max-token settings below apply to OpenAI only.'
+                  : undefined
+              }
+            >
               <Input
                 value={form.model ?? ''}
                 onChange={(event) => setForm({ ...form, model: event.target.value })}
                 placeholder={data.defaultModel}
                 disabled={readOnly}
+                list="ai-model-suggestions"
               />
+              <datalist id="ai-model-suggestions">
+                {form.provider === 'openai' ? (
+                  <option value="gpt-4o-mini" />
+                ) : (
+                  <>
+                    <option value="claude-opus-5-5">Claude Opus 5.5</option>
+                    <option value="claude-sonnet-5-5">Claude Sonnet 5.5</option>
+                    <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
+                  </>
+                )}
+              </datalist>
             </FormField>
 
             <div className="grid gap-3 sm:grid-cols-2">

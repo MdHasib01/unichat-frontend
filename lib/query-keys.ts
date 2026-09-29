@@ -25,8 +25,13 @@ export const queryKeys = {
   metaAccounts: ['integrations', 'meta', 'accounts'] as const,
   webhookEvents: (page: number) => ['integrations', 'webhook-events', page] as const,
 
+  widgets: ['integrations', 'webchat'] as const,
+  widget: (id: string) => ['integrations', 'webchat', id] as const,
+
   ai: ['ai'] as const,
   knowledge: (filters: Record<string, unknown>) => ['ai', 'knowledge', filters] as const,
+  training: (filters: Record<string, unknown>) => ['ai', 'training', filters] as const,
+  trainingImport: (id: string) => ['ai', 'training', 'import', id] as const,
 
   automations: ['automations'] as const,
   automation: (id: string) => ['automation', id] as const,

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { KnowledgeManager } from '@/features/ai/knowledge-manager';
+import { TrainingManager } from '@/features/ai/training-manager';
 
-export const metadata: Metadata = { title: 'Train Content' };
+export const metadata: Metadata = { title: 'Train Messages' };
 
-// Train Content and Knowledge are the same workflow viewed from two entries
-// in the sidebar, so they share one implementation rather than duplicating it.
-export default function TrainContentPage() {
-  return <KnowledgeManager />;
+// Approved question → answer pairs: written here, taught from the inbox, or
+// imported from JSON. Long-form documents live under Knowledge.
+export default function TrainMessagesPage() {
+  return <TrainingManager />;
 }

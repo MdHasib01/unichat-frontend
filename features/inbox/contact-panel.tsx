@@ -7,6 +7,7 @@ import {
   Bot,
   Check,
   ExternalLink,
+  Globe,
   Mail,
   MapPin,
   MessageSquare,
@@ -34,7 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/overlays';
 import { PlatformBadge } from '@/components/shared/platform';
-import type { AiMode, ContactDetail, ConversationDetail, MiniUser, Tag } from '@/types';
+import type { AiMode, ContactDetail, ConversationDetail, Message, MiniUser, Tag } from '@/types';
 
 export function ContactPanel({ conversation }: { conversation: ConversationDetail }) {
   const queryClient = useQueryClient();
@@ -58,6 +59,22 @@ export function ContactPanel({ conversation }: { conversation: ConversationDetai
   });
 
   const assignee = conversation.assignments[0]?.assignee ?? null;
+
+  // Website visitors: the page they last wrote from. Shares the thread's cache.
+  const isWebchat = conversation.platform === 'WEBCHAT';
+  const { data: messages } = useQuery({
+    queryKey: queryKeys.messages(conversation.id),
+    queryFn: () => get<Message[]>(`/conversations/${conversation.id}/messages`, { limit: 60 }),
+    enabled: isWebchat,
+  });
+  const lastPageUrl = React.useMemo(() => {
+    if (!isWebchat || !messages) return null;
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      const url = messages[i].direction === 'INBOUND' ? messages[i].metadata?.pageUrl : null;
+      if (typeof url === 'string') return url;
+    }
+    return null;
+  }, [isWebchat, messages]);
 
   const assign = useMutation({
     mutationFn: (assigneeId: string | null) =>
@@ -127,6 +144,9 @@ export function ContactPanel({ conversation }: { conversation: ConversationDetai
           label="Location"
           value={[contact.city, contact.country].filter(Boolean).join(', ') || null}
         />
+        {isWebchat ? (
+          <DetailRow icon={Globe} label="Last page" value={lastPageUrl ? pageLabel(lastPageUrl) : null} />
+        ) : null}
         <DetailRow
           icon={MessageSquare}
           label="First seen"
@@ -415,4 +435,13 @@ function NotesSection({
       </div>
     </Section>
   );
+}
+
+function pageLabel(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.host}${parsed.pathname === '/' ? '' : parsed.pathname}`;
+  } catch {
+    return url;
+  }
 }

@@ -260,6 +260,7 @@ function ChannelMix({ data }: { data: DashboardPayload }) {
     FACEBOOK: '#1877f2',
     INSTAGRAM: '#d62976',
     WHATSAPP: '#25d366',
+  WEBCHAT: '#4f46e5',
   };
 
   return (

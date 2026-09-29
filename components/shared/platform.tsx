@@ -1,4 +1,4 @@
-import { Facebook, Instagram, MessageCircle, StickyNote } from 'lucide-react';
+import { Facebook, Globe, Instagram, MessageCircle, StickyNote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Platform } from '@/types';
 
@@ -23,6 +23,12 @@ export const PLATFORM_META: Record<
     icon: MessageCircle,
     className: 'bg-[#25d366]/12 text-[#128c4a]',
     dot: 'bg-[#25d366]',
+  },
+  WEBCHAT: {
+    label: 'Website',
+    icon: Globe,
+    className: 'bg-[#4f46e5]/10 text-[#4f46e5]',
+    dot: 'bg-[#4f46e5]',
   },
   INTERNAL: {
     label: 'Internal',

@@ -1,4 +1,4 @@
-export type Platform = 'FACEBOOK' | 'INSTAGRAM' | 'WHATSAPP' | 'INTERNAL';
+export type Platform = 'FACEBOOK' | 'INSTAGRAM' | 'WHATSAPP' | 'WEBCHAT' | 'INTERNAL';
 export type MessagingPlatform = Exclude<Platform, 'INTERNAL'>;
 export type MemberRole = 'OWNER' | 'ADMIN' | 'MANAGER' | 'AGENT';
 export type MemberStatus = 'ACTIVE' | 'INVITED' | 'SUSPENDED';
@@ -220,6 +220,8 @@ export interface Message {
   deliveredAt: string | null;
   readAt: string | null;
   createdAt: string;
+  /** Channel extras, e.g. { pageUrl } for website chat messages. */
+  metadata?: Record<string, unknown> | null;
   user?: MiniUser | null;
   contact?: ContactSummary | null;
 }
@@ -352,9 +354,96 @@ export interface AIAssistant {
 
 export interface AIPayload {
   assistant: AIAssistant;
-  stats: { documents: number; chunks: number; ready: number; failed: number };
+  stats: { documents: number; chunks: number; ready: number; failed: number; training: number };
   providers: Array<{ id: string; label: string; configured: boolean }>;
   defaultModel: string;
+}
+
+export interface AIAnswerSource {
+  type: 'training' | 'knowledge';
+  id: string;
+  documentId?: string;
+  title: string;
+  score: number;
+}
+
+export type TrainingSource = 'MANUAL' | 'INBOX' | 'IMPORT';
+export type TrainingStatus = 'ACTIVE' | 'DISABLED';
+
+export interface TrainingExample {
+  id: string;
+  question: string;
+  answer: string;
+  source: TrainingSource;
+  status: TrainingStatus;
+  conversationId: string | null;
+  messageId: string | null;
+  useCount: number;
+  lastUsedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrainingStats {
+  total: number;
+  active: number;
+  disabled: number;
+  manual: number;
+  inbox: number;
+  imported: number;
+}
+
+export interface TrainingImportPreview {
+  format: 'pairs' | 'transcripts' | 'unknown';
+  count: number;
+  skipped: number;
+  preview: Array<{ question: string; answer: string }>;
+  errors: Array<{ index: number; message: string }>;
+}
+
+export interface TrainingImport {
+  id: string;
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  fileName: string | null;
+  total: number;
+  imported: number;
+  updated: number;
+  skipped: number;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+export type WidgetPosition = 'BOTTOM_RIGHT' | 'BOTTOM_LEFT';
+export type PreChatMode = 'OFF' | 'OPTIONAL' | 'REQUIRED';
+export type PreChatField = 'name' | 'email' | 'phone';
+
+export interface ChatWidget {
+  id: string;
+  publicKey: string;
+  name: string;
+  isActive: boolean;
+  allowedDomains: string[];
+  position: WidgetPosition;
+  offsetX: number;
+  offsetY: number;
+  primaryColor: string;
+  logoUrl: string | null;
+  launcherIcon: 'chat' | 'help' | 'message' | 'logo';
+  title: string;
+  subtitle: string | null;
+  welcomeMessage: string | null;
+  inputPlaceholder: string;
+  offlineMessage: string | null;
+  showBranding: boolean;
+  preChatMode: PreChatMode;
+  preChatFields: PreChatField[];
+  lastSeenAt: string | null;
+  lastSeenOrigin: string | null;
+  createdAt: string;
+  updatedAt: string;
+  conversationCount?: number;
+  scriptUrl: string;
+  snippet: string;
 }
 
 export interface KnowledgeDocument {
@@ -378,7 +467,8 @@ export interface AITestResult {
   wouldAutoReply: boolean;
   wouldHandoff: boolean;
   handoffReason?: string;
-  sources: Array<{ documentId: string; title: string; score: number }>;
+  exactMatch?: boolean;
+  sources: AIAnswerSource[];
   model: string;
   tokensUsed: number;
 }

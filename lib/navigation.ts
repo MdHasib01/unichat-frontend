@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   BadgeHelp,
+  BookOpen,
   BarChart3,
   Bot,
   Boxes,
@@ -9,6 +10,7 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageSquareShare,
+  MessagesSquare,
   Mic,
   Package,
   PhoneCall,
@@ -80,7 +82,8 @@ export const NAVIGATION: NavItem[] = [
     permission: 'ai.read',
     children: [
       { label: 'AI Setup', href: '/ai-training/setup', icon: Bot },
-      { label: 'Train Content', href: '/ai-training/train-content', icon: BrainCircuit },
+      { label: 'Train Messages', href: '/ai-training/train-content', icon: MessagesSquare },
+      { label: 'Knowledge', href: '/ai-training/knowledge', icon: BookOpen },
     ],
   },
   { label: 'Insights', href: '/analytics', icon: BarChart3, permission: 'analytics.read' },
