@@ -95,6 +95,22 @@ export default function RegisterPage() {
         <Button type="submit" className="w-full" loading={mutation.isPending}>
           Create workspace
         </Button>
+
+        <p className="text-center text-xs leading-relaxed text-muted-foreground">
+          By creating a workspace you agree to the{' '}
+          <Link href="/terms" className="font-medium text-primary hover:underline">
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link href="/acceptable-use" className="font-medium text-primary hover:underline">
+            Acceptable Use Policy
+          </Link>
+          , and acknowledge the{' '}
+          <Link href="/privacy" className="font-medium text-primary hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">

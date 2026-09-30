@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { UnichatWordmark } from '@/components/shared/brand';
 import { Button } from '@/components/ui/button';
+import { LegalFooter } from '@/components/legal/legal-footer';
 
 export default function NotFound() {
   return (
@@ -15,6 +16,7 @@ export default function NotFound() {
       <Button asChild className="mt-6">
         <Link href="/dashboard">Back to dashboard</Link>
       </Button>
+      <LegalFooter className="mt-12 flex max-w-xl flex-col items-center [&_ul]:justify-center" />
     </div>
   );
 }

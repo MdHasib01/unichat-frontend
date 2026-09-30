@@ -1,8 +1,9 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { KeyRound, LogOut, Monitor, ShieldAlert } from 'lucide-react';
+import { KeyRound, LogOut, Monitor, ShieldAlert, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { del, get, post } from '@/services/api';
 import { queryKeys } from '@/lib/query-keys';
@@ -202,6 +203,23 @@ export default function AccountSecurityPage() {
             </div>
           )}
         </CardContent>
+      </Card>
+
+      <Card className="border-destructive/30">
+        <CardHeader className="flex-row items-start justify-between gap-4 space-y-0">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-destructive" />
+              Delete your account
+            </CardTitle>
+            <CardDescription>
+              Request permanent deletion of your account, your workspace or its synced messaging data.
+            </CardDescription>
+          </div>
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link href="/delete-account">Request deletion</Link>
+          </Button>
+        </CardHeader>
       </Card>
     </div>
   );

@@ -17,7 +17,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { LEGAL } from '@/lib/legal';
 import { useSession } from '@/hooks/use-session';
+import { LegalFooter } from '@/components/legal/legal-footer';
 import { PageContainer, PageHeader } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import {
@@ -307,7 +309,7 @@ export default function HelpPage() {
         <CardContent className="flex flex-wrap gap-2">
           <Button asChild>
             <a
-              href={`mailto:support@unichat.app?subject=${encodeURIComponent(
+              href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(
                 `Unichat support — ${session?.organization?.name ?? 'workspace'}`,
               )}`}
             >
@@ -320,6 +322,8 @@ export default function HelpPage() {
           </Button>
         </CardContent>
       </Card>
+
+      <LegalFooter className="mt-6" />
     </PageContainer>
   );
 }

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { UnichatWordmark } from '@/components/shared/brand';
+import { LegalFooter } from '@/components/legal/legal-footer';
 
 const HIGHLIGHTS = [
   'Messenger, Instagram Direct and WhatsApp in one inbox',
@@ -18,6 +19,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <UnichatWordmark />
           </Link>
           {children}
+          <LegalFooter className="mt-10 border-t border-border pt-6" />
         </div>
       </div>
 

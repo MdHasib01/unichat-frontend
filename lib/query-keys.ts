@@ -62,4 +62,5 @@ export const queryKeys = {
   notifications: (filters: Record<string, unknown>) => ['notifications', filters] as const,
   auditLogs: (page: number) => ['audit-logs', page] as const,
   sessions: ['auth', 'sessions'] as const,
+  deletionRequests: ['account', 'deletion-requests'] as const,
 };
