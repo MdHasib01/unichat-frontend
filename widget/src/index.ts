@@ -107,6 +107,18 @@ function timeLabel(iso: string): string {
   }
 }
 
+/**
+ * The product name for "Powered by", from the domain serving the widget:
+ * Unichat on its own domain, Repliva everywhere else (mirrors lib/brand.ts).
+ */
+function brandNameFor(apiBase: string): string {
+  try {
+    return new URL(apiBase).hostname.toLowerCase() === 'unichat.nuktatechnologies.com' ? 'Unichat' : 'Repliva';
+  } catch {
+    return 'Repliva';
+  }
+}
+
 // ---------------------------------------------------------------------------
 // persistence (localStorage can throw in private modes / blocked storage)
 // ---------------------------------------------------------------------------
@@ -210,7 +222,7 @@ class ChatWidget {
     this.content = h('div');
     this.content.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;';
     this.brand = h('div', 'brand');
-    this.brand.append('Powered by ', h('strong', undefined, 'Repliva'));
+    this.brand.append('Powered by ', h('strong', undefined, brandNameFor(apiBase)));
     this.panel.append(header, this.content, this.brand);
 
     this.launcher = h('button', 'launcher');

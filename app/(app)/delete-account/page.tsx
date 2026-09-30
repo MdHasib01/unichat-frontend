@@ -10,6 +10,7 @@ import { queryKeys } from '@/lib/query-keys';
 import { LEGAL } from '@/lib/legal';
 import { cn, formatDateTime } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
+import { useBrand } from '@/components/brand-provider';
 import { PageContainer, PageHeader } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import {
@@ -83,6 +84,7 @@ const STATUS_BADGES: Record<Status, { label: string; variant: 'warning' | 'defau
 export default function DeleteAccountPage() {
   const queryClient = useQueryClient();
   const { session } = useSession();
+  const brand = useBrand();
   const role = session?.role ?? null;
 
   const [scope, setScope] = React.useState<Scope>('ACCOUNT');
@@ -124,7 +126,7 @@ export default function DeleteAccountPage() {
     <PageContainer className="max-w-3xl">
       <PageHeader
         title="Delete account or data"
-        description={`Ask ${LEGAL.productName} to permanently delete your account, your workspace, or the messaging data synced from connected platforms.`}
+        description={`Ask ${brand.name} to permanently delete your account, your workspace, or the messaging data synced from connected platforms.`}
       />
 
       <div className="space-y-4">

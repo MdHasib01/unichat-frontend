@@ -2,13 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, type LegalSection } from '@/components/legal/legal-page';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
+import { BrandName } from '@/components/brand-provider';
 
-export const metadata: Metadata = {
-  title: 'Acceptable Use Policy',
-  description: `What you may not do with ${LEGAL.productName}.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Acceptable Use Policy',
+    description: `What you may not do with ${name}.`,
+  };
+}
 
-const P = LEGAL.productName;
+/** The product name for the current domain (Unichat or Repliva). */
+const P = <BrandName />;
 
 const sections: LegalSection[] = [
   {

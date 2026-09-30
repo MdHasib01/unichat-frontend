@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Crown, Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandName } from '@/components/brand-provider';
 import {
   Dialog,
   DialogContent,
@@ -53,7 +54,7 @@ export function CrownDialogProvider({ children }: { children: React.ReactNode })
           </DialogHeader>
 
           <div className="rounded-lg border border-border bg-secondary/60 p-3.5 text-sm text-muted-foreground">
-            This module is part of the Repliva roadmap but is not being sold yet, so it has no
+            This module is part of the <BrandName /> roadmap but is not being sold yet, so it has no
             functionality in your workspace today. Everything else in your sidebar — inbox,
             integrations, sales, calls, AI training and insights — is fully available.
           </div>

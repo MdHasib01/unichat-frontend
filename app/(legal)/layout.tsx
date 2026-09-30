@@ -1,20 +1,22 @@
 import Link from 'next/link';
-import { UnichatWordmark } from '@/components/shared/brand';
+import { BrandWordmark } from '@/components/shared/brand';
 import { Button } from '@/components/ui/button';
 import { LegalFooter } from '@/components/legal/legal-footer';
-import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
 
 /**
  * Public frame for the home page and the legal pages. No SessionProvider and
  * no API calls, so they render for signed-out visitors and Meta's reviewers.
  */
-export default function LegalLayout({ children }: { children: React.ReactNode }) {
+export default async function LegalLayout({ children }: { children: React.ReactNode }) {
+  const brand = await getBrand();
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" aria-label={`${LEGAL.productName} home`}>
-            <UnichatWordmark />
+          <Link href="/" aria-label={`${brand.name} home`}>
+            <BrandWordmark />
           </Link>
           <div className="flex items-center gap-2">
             <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex">

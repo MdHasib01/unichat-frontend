@@ -3,13 +3,19 @@ import Link from 'next/link';
 import { LegalPage, type LegalSection } from '@/components/legal/legal-page';
 import { LegalValue } from '@/components/legal/placeholder';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
+import { BrandName } from '@/components/brand-provider';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service',
-  description: `The terms that govern your use of ${LEGAL.productName}.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Terms of Service',
+    description: `The terms that govern your use of ${name}.`,
+  };
+}
 
-const P = LEGAL.productName;
+/** The product name for the current domain (Unichat or Repliva). */
+const P = <BrandName />;
 
 const sections: LegalSection[] = [
   {

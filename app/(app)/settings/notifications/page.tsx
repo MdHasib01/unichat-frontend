@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Bell, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import { BrandName } from '@/components/brand-provider';
 import {
   Card,
   CardContent,
@@ -143,7 +144,7 @@ export default function NotificationSettingsPage() {
         <CardHeader>
           <CardTitle>Desktop notifications</CardTitle>
           <CardDescription>
-            Show a system notification even when Repliva is in a background tab.
+            Show a system notification even when <BrandName /> is in a background tab.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { BrandName } from '@/components/brand-provider';
 import { FormField, Input } from '@/components/ui/primitives';
 import { ApiError, post } from '@/services/api';
 
@@ -53,7 +54,7 @@ function AcceptInvitationForm() {
   });
 
   /**
-   * An existing Repliva user only needs the link; the name and password
+   * An existing user only needs the link; the name and password
    * fields are used when the invite creates their account.
    */
   const joinExisting = useMutation({
@@ -95,7 +96,7 @@ function AcceptInvitationForm() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Join the team</h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        Finish setting up your account to start working in this Repliva workspace.
+        Finish setting up your account to start working in this <BrandName /> workspace.
       </p>
 
       <form
@@ -122,7 +123,7 @@ function AcceptInvitationForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Already have a Repliva account?{' '}
+        Already have a <BrandName /> account?{' '}
         <button
           type="button"
           onClick={() => joinExisting.mutate()}

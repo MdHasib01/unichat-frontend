@@ -2,14 +2,20 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
+import { BrandName } from '@/components/brand-provider';
 
-export const metadata: Metadata = {
-  title: 'Data Deletion Instructions',
-  description: `How to disconnect Facebook, Instagram and WhatsApp from ${LEGAL.productName} and how to delete your account and data.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Data Deletion Instructions',
+    description: `How to disconnect Facebook, Instagram and WhatsApp from ${name} and how to delete your account and data.`,
+  };
+}
 
-const P = LEGAL.productName;
-const deletionMail = `mailto:${LEGAL.privacyEmail}?subject=${encodeURIComponent(`${P} data deletion request`)}`;
+/** The product name for the current domain (Unichat or Repliva). */
+const P = <BrandName />;
+const deletionMail = `mailto:${LEGAL.privacyEmail}?subject=${encodeURIComponent('Data deletion request')}`;
 
 const sections: LegalSection[] = [
   {
@@ -19,7 +25,7 @@ const sections: LegalSection[] = [
       <>
         <ol>
           <li>
-            Sign in to {P} at <a href={`${LEGAL.siteUrl}/login`}>{LEGAL.siteUrl.replace(/^https?:\/\//, '')}/login</a>.
+            <Link href="/login">Sign in</Link> to {P}.
           </li>
           <li>Open <strong>Integrations</strong> from the sidebar.</li>
           <li>Under <strong>Connected channels</strong>, find the Page, Instagram account or WhatsApp number.</li>

@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { MailCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BrandName } from '@/components/brand-provider';
 import { FormField, Input } from '@/components/ui/primitives';
 import { post } from '@/services/api';
 
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
         </span>
         <h1 className="text-2xl font-semibold tracking-tight">Check your inbox</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
-          If that email is registered with Repliva, a password reset link is on its way. The link
+          If that email is registered with <BrandName />, a password reset link is on its way. The link
           expires in one hour.
         </p>
 

@@ -4,14 +4,13 @@
  * A value of `null` is information nobody has supplied yet. The pages render
  * it as a highlighted placeholder rather than guessing — fill these in before
  * going live (see docs/meta-app-review.md).
+ *
+ * The product name, logo and site address depend on the visitor's domain and
+ * live in lib/brand.ts — use useBrand() / getBrand() for those.
  */
 export const LEGAL = {
-  /** The service name used across the legal pages. */
-  productName: 'Repliva',
-  /** The business that operates the service and acts as data controller. */
+  /** The business that operates the service and acts as data controller — the same for every brand. */
   operatorName: 'Repliva',
-
-  siteUrl: (process.env.NEXT_PUBLIC_APP_URL || 'https://repliva.site').replace(/\/$/, ''),
 
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@repliva.site',
   privacyEmail:
@@ -29,17 +28,16 @@ export const LEGAL = {
   /** How long we allow ourselves to complete a verified deletion request. */
   deletionDays: 30,
 
+  /** Registered postal address — must match the documents given to Meta. */
+  registeredAddress: 'Noapara, Abhaynagar, Jashore, PO: 7460, Bangladesh' as string | null,
+  governingLaw: 'the laws of Bangladesh' as string | null,
+  jurisdictionCourts: 'the courts of Jashore, Bangladesh' as string | null,
+
   // --- Not yet provided --------------------------------------------------
   /** Legal form and registration, e.g. "Repliva Ltd, company no. 12345678". */
   registrationNumber: null as string | null,
-  /** Registered postal address. */
-  registeredAddress: null as string | null,
-  /** e.g. "the laws of England and Wales". */
-  governingLaw: null as string | null,
-  /** e.g. "the courts of London, England". */
-  jurisdictionCourts: null as string | null,
-  /** The company hosting the servers and database, e.g. "Hetzner Online GmbH". */
-  hostingProvider: null as string | null,
+  /** The company hosting the servers and database. */
+  hostingProvider: 'Database Mart (databasemart.com)' as string | null,
   /** Where the servers are, e.g. "Germany (EU)". */
   hostingRegion: null as string | null,
 } as const;

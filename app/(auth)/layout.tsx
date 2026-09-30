@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Check } from 'lucide-react';
-import { UnichatWordmark } from '@/components/shared/brand';
+import { BrandWordmark } from '@/components/shared/brand';
+import { BrandName } from '@/components/brand-provider';
 import { LegalFooter } from '@/components/legal/legal-footer';
 
 const HIGHLIGHTS = [
@@ -16,7 +17,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10">
         <div className="mx-auto w-full max-w-sm">
           <Link href="/" className="mb-8 inline-flex">
-            <UnichatWordmark />
+            <BrandWordmark />
           </Link>
           {children}
           <LegalFooter className="mt-10 border-t border-border pt-6" />
@@ -30,7 +31,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_20%_20%,white_0,transparent_45%),radial-gradient(circle_at_80%_70%,white_0,transparent_40%)]"
         />
         <div className="relative max-w-md text-white">
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-white/70">Repliva</p>
+          <p className="text-sm font-medium uppercase tracking-[0.18em] text-white/70"><BrandName /></p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight">
             One inbox for every customer conversation.
           </h2>

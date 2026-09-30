@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, Crown, PanelLeftClose, PanelLeftOpen, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NAVIGATION, isCrownRoute, type NavItem } from '@/lib/navigation';
-import { UnichatLogo, UnichatWordmark } from '@/components/shared/brand';
+import { BrandLogo, BrandWordmark } from '@/components/shared/brand';
 import { Badge, Tooltip } from '@/components/ui/primitives';
 import { useSession } from '@/hooks/use-session';
 import { useCrownDialog } from './crown-dialog';
@@ -97,7 +97,7 @@ export function Sidebar({ unreadCount = 0, onNavigate, forceExpanded = false }: 
     >
       <div className={cn('flex h-14 shrink-0 items-center border-b border-sidebar-border', isCollapsed ? 'justify-center px-2' : 'justify-between px-4')}>
         <Link href="/dashboard" className="flex items-center" onClick={onNavigate}>
-          {isCollapsed ? <UnichatLogo /> : <UnichatWordmark />}
+          {isCollapsed ? <BrandLogo /> : <BrandWordmark />}
         </Link>
         {!forceExpanded && !isCollapsed ? (
           <button

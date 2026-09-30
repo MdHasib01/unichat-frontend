@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowLeft, Crown, Lock, Mail } from 'lucide-react';
 import { PageContainer } from '@/components/layout/app-shell';
+import { BrandName } from '@/components/brand-provider';
 import { Button } from '@/components/ui/button';
 import { Badge, Card } from '@/components/ui/primitives';
 import { CROWN_SERVICES } from '@/lib/navigation';
@@ -17,7 +18,7 @@ import { CROWN_SERVICES } from '@/lib/navigation';
 export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | string }) {
   const service = CROWN_SERVICES[route] ?? {
     title: 'Coming soon',
-    description: 'This module is on the Repliva roadmap.',
+    description: 'This module is on the roadmap.',
   };
 
   return (
@@ -48,7 +49,7 @@ export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | str
           <div className="rounded-lg border border-border bg-secondary/50 p-4 text-sm">
             <p className="font-medium">Why you can see this</p>
             <p className="mt-1 text-muted-foreground">
-              Repliva keeps upcoming modules visible in the sidebar so you know what is planned, but
+              <BrandName /> keeps upcoming modules visible in the sidebar so you know what is planned, but
               this one is not being sold yet and has no functionality in your workspace. Nothing here
               is connected to your data, and nothing is simulated to look like it works.
             </p>

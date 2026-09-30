@@ -2,13 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
+import { BrandName } from '@/components/brand-provider';
 
-export const metadata: Metadata = {
-  title: 'Meta Integration Disclosure',
-  description: `How ${LEGAL.productName} integrates with Facebook, Instagram and WhatsApp, which permissions it requests and why.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Meta Integration Disclosure',
+    description: `How ${name} integrates with Facebook, Instagram and WhatsApp, which permissions it requests and why.`,
+  };
+}
 
-const P = LEGAL.productName;
+/** The product name for the current domain (Unichat or Repliva). */
+const P = <BrandName />;
 
 /** Mirrors META_SCOPES in .env.example. Keep the two in sync. */
 const PERMISSIONS: Array<[string, string]> = [

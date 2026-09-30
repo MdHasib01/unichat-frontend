@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { del, get, getWithMeta, patch, post } from '@/services/api';
+import { BrandName } from '@/components/brand-provider';
 import { queryKeys } from '@/lib/query-keys';
 import { timeAgo, truncate } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
@@ -354,7 +355,7 @@ function KnowledgeDialog({
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['ai'] });
       onClose();
-      toast.success(document ? 'Knowledge updated' : 'Added — Repliva is indexing it now');
+      toast.success(document ? 'Knowledge updated' : 'Added — indexing it now');
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -365,7 +366,7 @@ function KnowledgeDialog({
         <DialogHeader>
           <DialogTitle>{document ? 'Edit knowledge' : 'Add knowledge'}</DialogTitle>
           <DialogDescription>
-            Write it the way you would explain it to a new team member. Repliva splits it into
+            Write it the way you would explain it to a new team member. <BrandName /> splits it into
             passages, indexes them, and the assistant quotes only from what you write here.
           </DialogDescription>
         </DialogHeader>

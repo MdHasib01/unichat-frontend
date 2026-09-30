@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Copy, MessageSquareQuote, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { del, get, patch, post } from '@/services/api';
+import { BrandName } from '@/components/brand-provider';
 import { queryKeys } from '@/lib/query-keys';
 import { useSession } from '@/hooks/use-session';
 import { PageContainer, PageHeader } from '@/components/layout/app-shell';
@@ -298,7 +299,7 @@ function TemplateDialog({
           <DialogDescription>
             Use <code className="font-mono text-xs">{'{{first_name}}'}</code>,{' '}
             <code className="font-mono text-xs">{'{{customer_name}}'}</code> or{' '}
-            <code className="font-mono text-xs">{'{{business_name}}'}</code> and Repliva fills them
+            <code className="font-mono text-xs">{'{{business_name}}'}</code> and <BrandName /> fills them
             in when the message is sent.
           </DialogDescription>
         </DialogHeader>

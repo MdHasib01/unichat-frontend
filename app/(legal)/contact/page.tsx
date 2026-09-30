@@ -3,13 +3,15 @@ import Link from 'next/link';
 import { LifeBuoy, Mail, Scale, ShieldCheck, Trash2 } from 'lucide-react';
 import { LegalValue } from '@/components/legal/placeholder';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
 
-export const metadata: Metadata = {
-  title: 'Contact',
-  description: `Contact ${LEGAL.productName} for support, privacy, data deletion and legal questions.`,
-};
-
-const P = LEGAL.productName;
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Contact',
+    description: `Contact ${name} for support, privacy, data deletion and legal questions.`,
+  };
+}
 
 function mailto(address: string, subject: string) {
   return `mailto:${address}?subject=${encodeURIComponent(subject)}`;
@@ -21,14 +23,14 @@ const CHANNELS = [
     title: 'General support',
     body: `Help with your account, connecting channels, the inbox, automations or the AI assistant.`,
     email: LEGAL.supportEmail,
-    subject: `${P} support`,
+    subject: 'support',
   },
   {
     icon: ShieldCheck,
     title: 'Privacy requests',
     body: 'Access, correct or export your personal information, or ask how we handle it.',
     email: LEGAL.privacyEmail,
-    subject: `${P} privacy request`,
+    subject: 'privacy request',
     link: { href: '/privacy', label: 'Privacy Policy' },
   },
   {
@@ -36,7 +38,7 @@ const CHANNELS = [
     title: 'Data deletion',
     body: 'Delete your account, your workspace or the messaging data synced from Facebook, Instagram and WhatsApp.',
     email: LEGAL.privacyEmail,
-    subject: `${P} data deletion request`,
+    subject: 'data deletion request',
     link: { href: '/data-deletion', label: 'Deletion instructions' },
   },
   {
@@ -44,12 +46,15 @@ const CHANNELS = [
     title: 'Legal inquiries',
     body: 'Questions about our terms, data processing agreements, or reports of abuse or policy violations.',
     email: LEGAL.legalEmail,
-    subject: `${P} legal inquiry`,
+    subject: 'legal inquiry',
     link: { href: '/terms', label: 'Terms of Service' },
   },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const brand = await getBrand();
+  const P = brand.name;
+
   return (
     <div className="mx-auto w-full max-w-3xl">
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">Legal</p>
@@ -67,7 +72,7 @@ export default function ContactPage() {
             <h2 className="mt-3 text-base font-semibold text-foreground">{channel.title}</h2>
             <p className="mt-1 flex-1 text-sm leading-relaxed text-muted-foreground">{channel.body}</p>
             <a
-              href={mailto(channel.email, channel.subject)}
+              href={mailto(channel.email, `${P} ${channel.subject}`)}
               className="mt-4 inline-flex items-center gap-1.5 break-all text-sm font-medium text-primary hover:underline"
             >
               <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -99,8 +104,8 @@ export default function ContactPage() {
           </dd>
           <dt className="font-medium text-foreground">Website</dt>
           <dd className="break-all">
-            <a href={LEGAL.siteUrl} className="text-primary hover:underline">
-              {LEGAL.siteUrl}
+            <a href={brand.siteUrl} className="text-primary hover:underline">
+              {brand.siteUrl}
             </a>
           </dd>
         </dl>

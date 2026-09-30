@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { BrandName } from '@/components/brand-provider';
 import { FormField, Input } from '@/components/ui/primitives';
 import { ApiError, post } from '@/services/api';
 import type { SessionPayload } from '@/types';
@@ -65,7 +66,7 @@ function LoginForm() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        Sign in to your Repliva workspace to pick up where you left off.
+        Sign in to your <BrandName /> workspace to pick up where you left off.
       </p>
 
       <form
@@ -99,7 +100,7 @@ function LoginForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        New to Repliva?{' '}
+        New to <BrandName />?{' '}
         <Link href="/register" className="font-medium text-primary hover:underline">
           Create a workspace
         </Link>

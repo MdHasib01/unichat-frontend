@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bot, Info, Save, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { get, patch } from '@/services/api';
+import { BrandName } from '@/components/brand-provider';
 import { queryKeys } from '@/lib/query-keys';
 import { useSession } from '@/hooks/use-session';
 import { Button } from '@/components/ui/button';
@@ -337,7 +338,7 @@ export default function AISetupPage() {
         <Card className="lg:sticky lg:top-4">
           <CardHeader>
             <CardTitle>Model</CardTitle>
-            <CardDescription>Repliva is not tied to one AI provider.</CardDescription>
+            <CardDescription><BrandName /> is not tied to one AI provider.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <FormField label="Provider">
@@ -364,7 +365,7 @@ export default function AISetupPage() {
               <div className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 p-2.5 text-xs">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
                 <span>
-                  No API key is configured for this provider, so Repliva falls back to the built-in
+                  No API key is configured for this provider, so <BrandName /> falls back to the built-in
                   offline assistant, which answers strictly from your knowledge base.
                 </span>
               </div>

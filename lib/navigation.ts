@@ -109,7 +109,7 @@ export const CROWN_SERVICES: Record<string, { title: string; description: string
   },
   '/marketing/ad-launcher': {
     title: 'Ad Launcher',
-    description: 'Publish campaigns straight to connected ad accounts and track results in Repliva.',
+    description: 'Publish campaigns straight to connected ad accounts and track results alongside your conversations.',
   },
   '/marketing/broadcast': {
     title: 'Broadcast',

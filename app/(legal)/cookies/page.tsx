@@ -2,13 +2,19 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
+import { BrandName } from '@/components/brand-provider';
 
-export const metadata: Metadata = {
-  title: 'Cookie Policy',
-  description: `The cookies and browser storage ${LEGAL.productName} uses, and how to control them.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: 'Cookie Policy',
+    description: `The cookies and browser storage ${name} uses, and how to control them.`,
+  };
+}
 
-const P = LEGAL.productName;
+/** The product name for the current domain (Unichat or Repliva). */
+const P = <BrandName />;
 
 const sections: LegalSection[] = [
   {

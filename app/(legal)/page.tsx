@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { LegalValue } from '@/components/legal/placeholder';
 import { SignedInRedirect } from '@/components/legal/signed-in-redirect';
 import { LEGAL } from '@/lib/legal';
+import { getBrand } from '@/lib/brand-server';
 
 /**
  * Public home page. Meta's Business Verification and App Review both visit
@@ -11,7 +12,6 @@ import { LEGAL } from '@/lib/legal';
  * does, who runs it and how to reach them — with no invented claims.
  */
 
-const P = LEGAL.productName;
 
 const FEATURES = [
   {
@@ -36,7 +36,9 @@ const FEATURES = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { name: P } = await getBrand();
+
   return (
     <div className="mx-auto w-full max-w-5xl">
       <SignedInRedirect />

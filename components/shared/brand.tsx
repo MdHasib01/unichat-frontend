@@ -1,12 +1,16 @@
+'use client';
+
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useBrand } from '@/components/brand-provider';
 
 /**
- * Repliva mark — three overlapping message bubbles standing for the three
+ * Unichat mark — three overlapping message bubbles standing for the three
  * channels landing in one inbox. Drawn inline so it stays crisp and themable.
  */
-export function UnichatLogo({ className }: { className?: string }) {
+function UnichatMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={cn('h-7 w-7', className)} role="img" aria-label="Repliva">
+    <svg viewBox="0 0 32 32" className={cn('h-7 w-7', className)} role="img" aria-label="Unichat">
       <defs>
         <linearGradient id="unichat-mark" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="hsl(243 75% 62%)" />
@@ -28,17 +32,34 @@ export function UnichatLogo({ className }: { className?: string }) {
   );
 }
 
-export function UnichatWordmark({
+/** The current brand's logo mark (Unichat on its own domain, Repliva elsewhere). */
+export function BrandLogo({ className }: { className?: string }) {
+  const brand = useBrand();
+  if (brand.id === 'unichat') return <UnichatMark className={className} />;
+  return (
+    <Image
+      src="/repliva-logo.png"
+      alt="Repliva"
+      width={1304}
+      height={1206}
+      priority
+      className={cn('h-7 w-7 object-contain', className)}
+    />
+  );
+}
+
+export function BrandWordmark({
   className,
   showIcon = true,
 }: {
   className?: string;
   showIcon?: boolean;
 }) {
+  const brand = useBrand();
   return (
     <span className={cn('flex items-center gap-2', className)}>
-      {showIcon ? <UnichatLogo /> : null}
-      <span className="text-[17px] font-semibold tracking-tight text-foreground">Repliva</span>
+      {showIcon ? <BrandLogo /> : null}
+      <span className="text-[17px] font-semibold tracking-tight text-foreground">{brand.name}</span>
     </span>
   );
 }

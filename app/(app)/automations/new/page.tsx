@@ -8,7 +8,7 @@ export default function NewAutomationPage() {
     <PageContainer className="max-w-4xl">
       <PageHeader
         title="New automation"
-        description="Describe when the rule should fire and what Repliva should do."
+        description="Describe when the rule should fire and what should happen."
       />
       <AutomationEditor />
     </PageContainer>

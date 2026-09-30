@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { del, get, getWithMeta, post } from '@/services/api';
+import { BrandName } from '@/components/brand-provider';
 import { queryKeys } from '@/lib/query-keys';
 import { formatDateTime, formatDuration } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
@@ -214,7 +215,7 @@ export default function RecordingsPage() {
         <CardContent className="flex items-start gap-3 p-4">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <p className="text-sm text-muted-foreground">
-            Repliva stores call records and recording metadata — it does not place or record calls
+            <BrandName /> stores call records and recording metadata — it does not place or record calls
             itself. Connect a telephony provider that posts call data here, or log calls manually to
             keep the customer history complete.
           </p>
