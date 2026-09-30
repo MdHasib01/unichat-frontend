@@ -210,7 +210,7 @@ class ChatWidget {
     this.content = h('div');
     this.content.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;';
     this.brand = h('div', 'brand');
-    this.brand.append('Powered by ', h('strong', undefined, 'Unichat'));
+    this.brand.append('Powered by ', h('strong', undefined, 'Repliva'));
     this.panel.append(header, this.content, this.brand);
 
     this.launcher = h('button', 'launcher');

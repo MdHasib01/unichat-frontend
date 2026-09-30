@@ -1,29 +1,29 @@
 import Link from 'next/link';
-import { UnichatLogo } from '@/components/shared/brand';
+import { UnichatWordmark } from '@/components/shared/brand';
 import { Button } from '@/components/ui/button';
 import { LegalFooter } from '@/components/legal/legal-footer';
 import { LEGAL } from '@/lib/legal';
 
 /**
- * Public frame for the legal pages. No SessionProvider and no API calls, so
- * the pages render for signed-out visitors and Meta's reviewers alike.
+ * Public frame for the home page and the legal pages. No SessionProvider and
+ * no API calls, so they render for signed-out visitors and Meta's reviewers.
  */
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
-          <Link href="/privacy" className="flex items-center gap-2">
-            <span aria-hidden>
-              <UnichatLogo />
-            </span>
-            <span className="text-[17px] font-semibold tracking-tight text-foreground">
-              {LEGAL.productName}
-            </span>
+          <Link href="/" aria-label={`${LEGAL.productName} home`}>
+            <UnichatWordmark />
           </Link>
-          <Button asChild size="sm" variant="outline">
-            <Link href="/login">Sign in</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex">
+              <Link href="/register">Create workspace</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/login">Sign in</Link>
+            </Button>
+          </div>
         </div>
       </header>
 

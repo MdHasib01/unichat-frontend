@@ -109,7 +109,7 @@ export const CROWN_SERVICES: Record<string, { title: string; description: string
   },
   '/marketing/ad-launcher': {
     title: 'Ad Launcher',
-    description: 'Publish campaigns straight to connected ad accounts and track results in Unichat.',
+    description: 'Publish campaigns straight to connected ad accounts and track results in Repliva.',
   },
   '/marketing/broadcast': {
     title: 'Broadcast',

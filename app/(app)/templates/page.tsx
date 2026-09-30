@@ -298,7 +298,7 @@ function TemplateDialog({
           <DialogDescription>
             Use <code className="font-mono text-xs">{'{{first_name}}'}</code>,{' '}
             <code className="font-mono text-xs">{'{{customer_name}}'}</code> or{' '}
-            <code className="font-mono text-xs">{'{{business_name}}'}</code> and Unichat fills them
+            <code className="font-mono text-xs">{'{{business_name}}'}</code> and Repliva fills them
             in when the message is sent.
           </DialogDescription>
         </DialogHeader>

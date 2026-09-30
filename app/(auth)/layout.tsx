@@ -30,7 +30,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_20%_20%,white_0,transparent_45%),radial-gradient(circle_at_80%_70%,white_0,transparent_40%)]"
         />
         <div className="relative max-w-md text-white">
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-white/70">Unichat</p>
+          <p className="text-sm font-medium uppercase tracking-[0.18em] text-white/70">Repliva</p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight">
             One inbox for every customer conversation.
           </h2>

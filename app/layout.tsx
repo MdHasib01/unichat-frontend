@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+import { LEGAL } from '@/lib/legal';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -11,13 +12,27 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Unichat — one inbox for every customer conversation',
-    template: '%s · Unichat',
+    default: 'Repliva — one inbox for every customer conversation',
+    template: '%s · Repliva',
   },
   description:
-    'Unichat brings Facebook Messenger, Instagram Direct and WhatsApp Business into a single inbox, with automation, an AI assistant trained on your business, and team collaboration.',
-  applicationName: 'Unichat',
-  icons: { icon: '/favicon.svg' },
+    'Repliva brings Facebook Messenger, Instagram Direct and WhatsApp Business into a single inbox, with automation, an AI assistant trained on your business, and team collaboration.',
+  applicationName: 'Repliva',
+  metadataBase: new URL(LEGAL.siteUrl),
+  icons: { icon: '/favicon.svg', apple: '/app-icon-1024.png' },
+  openGraph: {
+    type: 'website',
+    siteName: 'Repliva',
+    title: 'Repliva — one inbox for every customer conversation',
+    description:
+      'Answer Facebook Messenger, Instagram Direct, WhatsApp Business and website chat messages from one shared inbox.',
+    images: [{ url: '/app-icon-1024.png', width: 1024, height: 1024, alt: 'Repliva' }],
+  },
+  // Meta Business Manager → Brand safety → Domains → "Meta-tag verification".
+  // DNS TXT verification needs no code; this is only for the meta-tag route.
+  ...(process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION
+    ? { other: { 'facebook-domain-verification': process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION } }
+    : {}),
 };
 
 export const viewport: Viewport = {

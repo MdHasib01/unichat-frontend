@@ -337,7 +337,7 @@ export default function AISetupPage() {
         <Card className="lg:sticky lg:top-4">
           <CardHeader>
             <CardTitle>Model</CardTitle>
-            <CardDescription>Unichat is not tied to one AI provider.</CardDescription>
+            <CardDescription>Repliva is not tied to one AI provider.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <FormField label="Provider">
@@ -364,7 +364,7 @@ export default function AISetupPage() {
               <div className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 p-2.5 text-xs">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
                 <span>
-                  No API key is configured for this provider, so Unichat falls back to the built-in
+                  No API key is configured for this provider, so Repliva falls back to the built-in
                   offline assistant, which answers strictly from your knowledge base.
                 </span>
               </div>

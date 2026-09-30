@@ -17,7 +17,7 @@ import { CROWN_SERVICES } from '@/lib/navigation';
 export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | string }) {
   const service = CROWN_SERVICES[route] ?? {
     title: 'Coming soon',
-    description: 'This module is on the Unichat roadmap.',
+    description: 'This module is on the Repliva roadmap.',
   };
 
   return (
@@ -48,7 +48,7 @@ export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | str
           <div className="rounded-lg border border-border bg-secondary/50 p-4 text-sm">
             <p className="font-medium">Why you can see this</p>
             <p className="mt-1 text-muted-foreground">
-              Unichat keeps upcoming modules visible in the sidebar so you know what is planned, but
+              Repliva keeps upcoming modules visible in the sidebar so you know what is planned, but
               this one is not being sold yet and has no functionality in your workspace. Nothing here
               is connected to your data, and nothing is simulated to look like it works.
             </p>

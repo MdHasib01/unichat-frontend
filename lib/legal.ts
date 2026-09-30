@@ -42,9 +42,30 @@ export const LEGAL = {
   hostingProvider: null as string | null,
   /** Where the servers are, e.g. "Germany (EU)". */
   hostingRegion: null as string | null,
-  /** EU/UK representative or DPO, if one is required for your business. */
-  dataProtectionContact: null as string | null,
 } as const;
+
+/**
+ * Legal facts still missing. Every one shows as a visible [PLACEHOLDER] on the
+ * public pages, and Meta's reviewers reject policies with placeholders — so a
+ * production build says so loudly.
+ */
+export const LEGAL_MISSING = (
+  [
+    'registrationNumber',
+    'registeredAddress',
+    'governingLaw',
+    'jurisdictionCourts',
+    'hostingProvider',
+    'hostingRegion',
+  ] as const
+).filter((key) => LEGAL[key] === null);
+
+if (process.env.NODE_ENV === 'production' && LEGAL_MISSING.length && typeof window === 'undefined') {
+  console.warn(
+    `[legal] frontend/lib/legal.ts is missing: ${LEGAL_MISSING.join(', ')}. ` +
+      'The legal pages show placeholders until these are set — fill them before Meta App Review.',
+  );
+}
 
 export interface LegalLink {
   label: string;

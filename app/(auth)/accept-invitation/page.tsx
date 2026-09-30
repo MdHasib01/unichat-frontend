@@ -53,7 +53,7 @@ function AcceptInvitationForm() {
   });
 
   /**
-   * An existing Unichat user only needs the link; the name and password
+   * An existing Repliva user only needs the link; the name and password
    * fields are used when the invite creates their account.
    */
   const joinExisting = useMutation({
@@ -95,7 +95,7 @@ function AcceptInvitationForm() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Join the team</h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        Finish setting up your account to start working in this Unichat workspace.
+        Finish setting up your account to start working in this Repliva workspace.
       </p>
 
       <form
@@ -122,7 +122,7 @@ function AcceptInvitationForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Already have a Unichat account?{' '}
+        Already have a Repliva account?{' '}
         <button
           type="button"
           onClick={() => joinExisting.mutate()}

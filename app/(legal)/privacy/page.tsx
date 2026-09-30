@@ -483,11 +483,6 @@ const sections: LegalSection[] = [
           If you messaged a business that uses {P}, please send your request to that business. We
           will support it in responding.
         </p>
-        <p>
-          Data protection representative or officer:{' '}
-          <LegalValue value={LEGAL.dataProtectionContact} label="DPO / EU-UK REPRESENTATIVE, IF REQUIRED" />
-          .
-        </p>
       </>
     ),
   },

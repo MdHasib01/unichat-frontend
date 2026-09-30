@@ -8,7 +8,7 @@ export default function NewAutomationPage() {
     <PageContainer className="max-w-4xl">
       <PageHeader
         title="New automation"
-        description="Describe when the rule should fire and what Unichat should do."
+        description="Describe when the rule should fire and what Repliva should do."
       />
       <AutomationEditor />
     </PageContainer>

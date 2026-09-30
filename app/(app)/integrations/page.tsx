@@ -153,7 +153,7 @@ function IntegrationsContent() {
             <div className="text-sm">
               <p className="font-medium">Mock mode is on</p>
               <p className="mt-0.5 text-muted-foreground">
-                No Meta app credentials are configured, so Unichat uses demo channels. Sending and
+                No Meta app credentials are configured, so Repliva uses demo channels. Sending and
                 receiving run through the same pipeline as production — only the transport is
                 simulated. Set <code className="font-mono text-xs">META_APP_ID</code>,{' '}
                 <code className="font-mono text-xs">META_APP_SECRET</code> and{' '}
@@ -247,7 +247,7 @@ function IntegrationsContent() {
             <CardHeader>
               <CardTitle>Connected channels</CardTitle>
               <CardDescription>
-                Messages sent to these accounts arrive in your Unichat inbox.
+                Messages sent to these accounts arrive in your Repliva inbox.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -255,7 +255,7 @@ function IntegrationsContent() {
                 <EmptyState
                   icon={Plug}
                   title="No channels connected"
-                  description="Connect Meta and choose the Pages, Instagram accounts and WhatsApp numbers you want in Unichat."
+                  description="Connect Meta and choose the Pages, Instagram accounts and WhatsApp numbers you want in Repliva."
                   action={
                     manage ? (
                       <Button onClick={() => connect.mutate()} loading={connect.isPending}>

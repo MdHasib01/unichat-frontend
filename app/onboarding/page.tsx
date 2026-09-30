@@ -193,7 +193,7 @@ export default function OnboardingPage() {
               <StepShell
                 icon={Building2}
                 title="What's your business called?"
-                description="This is the name your team sees, and the name Unichat uses in automated replies."
+                description="This is the name your team sees, and the name Repliva uses in automated replies."
               >
                 <FormField label="Business name" required>
                   <Input
@@ -519,7 +519,7 @@ function ChannelSteps({ step }: { step: number }) {
       <StepShell
         icon={Plug}
         title="Connect your Meta account"
-        description="Unichat uses Meta's official APIs to receive and send messages. Your access tokens are encrypted and never leave the server."
+        description="Repliva uses Meta's official APIs to receive and send messages. Your access tokens are encrypted and never leave the server."
       >
         {connected ? (
           <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 p-3.5 text-sm">
@@ -536,7 +536,7 @@ function ChannelSteps({ step }: { step: number }) {
                   Mock mode
                 </Badge>
                 <p>
-                  No Meta app is configured, so Unichat will connect demo channels instead. Every
+                  No Meta app is configured, so Repliva will connect demo channels instead. Every
                   other part of the product — inbox, automations, AI — works exactly the same.
                 </p>
               </div>
@@ -557,7 +557,7 @@ function ChannelSteps({ step }: { step: number }) {
       <StepShell
         icon={Plug}
         title="Connect Meta first"
-        description="Go back a step and connect your Meta account to choose which channels to bring into Unichat."
+        description="Go back a step and connect your Meta account to choose which channels to bring into Repliva."
       >
         <p className="text-sm text-muted-foreground">
           You can also skip this for now and connect channels later from the Integrations page.
@@ -580,7 +580,7 @@ function ChannelSteps({ step }: { step: number }) {
       <StepShell
         icon={Plug}
         title="Choose your Facebook Pages"
-        description="Messages sent to these Pages will arrive in your Unichat inbox."
+        description="Messages sent to these Pages will arrive in your Repliva inbox."
       >
         <div className="space-y-2">
           {available?.availablePages.length ? (

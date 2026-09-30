@@ -143,7 +143,7 @@ export default function NotificationSettingsPage() {
         <CardHeader>
           <CardTitle>Desktop notifications</CardTitle>
           <CardDescription>
-            Show a system notification even when Unichat is in a background tab.
+            Show a system notification even when Repliva is in a background tab.
           </CardDescription>
         </CardHeader>
         <CardContent>

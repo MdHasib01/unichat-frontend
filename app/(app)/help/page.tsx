@@ -37,7 +37,7 @@ const GUIDES = [
     title: 'Getting started',
     description: 'Set up your workspace, connect a channel and send your first reply.',
     steps: [
-      'Finish onboarding so Unichat knows your business name, hours and timezone.',
+      'Finish onboarding so Repliva knows your business name, hours and timezone.',
       'Connect Meta from Integrations and pick the Pages, Instagram accounts and WhatsApp numbers you want.',
       'Invite your team and give each person a role that matches what they should be able to do.',
       'Add a welcome automation so first-time customers always get an answer.',
@@ -54,7 +54,7 @@ const GUIDES = [
       'All three channels run through one Meta connection — connect once, then choose accounts.',
       'Instagram Direct needs an Instagram professional account linked to a connected Facebook Page.',
       'WhatsApp allows free-form replies for 24 hours after a customer writes; outside that window an approved template is required.',
-      'Some permissions need Meta app review. Unichat shows which ones on the Integrations page rather than failing silently.',
+      'Some permissions need Meta app review. Repliva shows which ones on the Integrations page rather than failing silently.',
       'If a channel shows an error, use Reconnect — the stored token may have expired.',
     ],
     href: '/integrations',
@@ -95,7 +95,7 @@ const GUIDES = [
     steps: [
       'A rule is a trigger ("when this happens") plus actions ("then do this").',
       'Turn on "only once per customer" for welcome messages so returning customers are not greeted again.',
-      'Use variables like {{first_name}} and {{business_name}} — Unichat fills them from the real customer.',
+      'Use variables like {{first_name}} and {{business_name}} — Repliva fills them from the real customer.',
       'Add a Wait action to follow up later without keeping anyone waiting at their keyboard.',
       'Check the activity list to see exactly which rules ran and whether they succeeded.',
     ],
@@ -154,12 +154,12 @@ const FAQS = [
   {
     question: 'What is mock mode?',
     answer:
-      'When no Meta app credentials are configured, Unichat runs with demo channels so you can use the whole product — inbox, automations, AI, sales — without connecting a real Meta account. Set META_APP_ID, META_APP_SECRET and MOCK_MODE=false to go live.',
+      'When no Meta app credentials are configured, Repliva runs with demo channels so you can use the whole product — inbox, automations, AI, sales — without connecting a real Meta account. Set META_APP_ID, META_APP_SECRET and MOCK_MODE=false to go live.',
   },
   {
     question: 'Will a returning customer get the welcome message again?',
     answer:
-      'Not if the automation has "only once per customer" turned on. Unichat records every automation run against the contact, so the welcome rule is skipped the second time.',
+      'Not if the automation has "only once per customer" turned on. Repliva records every automation run against the contact, so the welcome rule is skipped the second time.',
   },
   {
     question: 'Can I belong to more than one business?',
@@ -195,7 +195,7 @@ export default function HelpPage() {
     <PageContainer className="max-w-5xl">
       <PageHeader
         title="Help centre"
-        description="How Unichat works, and what to do when something is not behaving the way you expect."
+        description="How Repliva works, and what to do when something is not behaving the way you expect."
       />
 
       <div className="relative mb-5">
@@ -310,7 +310,7 @@ export default function HelpPage() {
           <Button asChild>
             <a
               href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(
-                `Unichat support — ${session?.organization?.name ?? 'workspace'}`,
+                `Repliva support — ${session?.organization?.name ?? 'workspace'}`,
               )}`}
             >
               <Mail className="h-4 w-4" />

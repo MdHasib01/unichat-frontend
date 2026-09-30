@@ -65,7 +65,7 @@ function LoginForm() {
     <div>
       <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        Sign in to your Unichat workspace to pick up where you left off.
+        Sign in to your Repliva workspace to pick up where you left off.
       </p>
 
       <form
@@ -99,19 +99,23 @@ function LoginForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        New to Unichat?{' '}
+        New to Repliva?{' '}
         <Link href="/register" className="font-medium text-primary hover:underline">
           Create a workspace
         </Link>
       </p>
 
-      <div className="mt-8 rounded-lg border border-dashed border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
-        <p className="font-medium text-foreground">Demo workspace</p>
-        <p className="mt-1">
-          After running the seed, sign in as <code className="font-mono">owner@demo.unichat.app</code>{' '}
-          with the password <code className="font-mono">Unichat2026!</code>
-        </p>
-      </div>
+      {/* Development only — production visitors (and Meta's reviewers) must
+          never see seed accounts on the sign-in page. */}
+      {process.env.NODE_ENV !== 'production' ? (
+        <div className="mt-8 rounded-lg border border-dashed border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
+          <p className="font-medium text-foreground">Demo workspace (development only)</p>
+          <p className="mt-1">
+            After running the seed, sign in as <code className="font-mono">owner@unichat.app</code> with
+            the <code className="font-mono">SEED_PASSWORD</code> from <code className="font-mono">backend/.env</code>.
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 }

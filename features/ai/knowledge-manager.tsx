@@ -354,7 +354,7 @@ function KnowledgeDialog({
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['ai'] });
       onClose();
-      toast.success(document ? 'Knowledge updated' : 'Added — Unichat is indexing it now');
+      toast.success(document ? 'Knowledge updated' : 'Added — Repliva is indexing it now');
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -365,7 +365,7 @@ function KnowledgeDialog({
         <DialogHeader>
           <DialogTitle>{document ? 'Edit knowledge' : 'Add knowledge'}</DialogTitle>
           <DialogDescription>
-            Write it the way you would explain it to a new team member. Unichat splits it into
+            Write it the way you would explain it to a new team member. Repliva splits it into
             passages, indexes them, and the assistant quotes only from what you write here.
           </DialogDescription>
         </DialogHeader>

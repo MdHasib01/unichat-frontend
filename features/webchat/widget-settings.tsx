@@ -379,7 +379,7 @@ export function WidgetSettings({ widgetId }: { widgetId: string }) {
 
                   <label className="flex items-center justify-between gap-4 rounded-lg border border-border p-3 text-sm">
                     <span>
-                      <span className="font-medium">Show “Powered by Unichat”</span>
+                      <span className="font-medium">Show “Powered by Repliva”</span>
                       <span className="block text-xs text-muted-foreground">A small line under the chat panel.</span>
                     </span>
                     <Switch checked={draft.showBranding} onCheckedChange={(showBranding) => update({ showBranding })} />
@@ -392,7 +392,7 @@ export function WidgetSettings({ widgetId }: { widgetId: string }) {
                   <CardTitle>Text</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-4 sm:grid-cols-2">
-                  <FormField label="Name in Unichat" required hint="Only your team sees this.">
+                  <FormField label="Name in Repliva" required hint="Only your team sees this.">
                     <Input value={draft.name} maxLength={80} onChange={(e) => update({ name: e.target.value })} />
                   </FormField>
                   <FormField label="Header title" required>
@@ -420,7 +420,7 @@ export function WidgetSettings({ widgetId }: { widgetId: string }) {
                   <CardTitle>Pre-chat form</CardTitle>
                   <CardDescription>
                     Ask visitors to introduce themselves before chatting. Their details are saved on the
-                    contact in Unichat.
+                    contact in Repliva.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-5">
