@@ -7,10 +7,9 @@ import { AlertTriangle, CheckCircle2, Clock, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { get, post } from '@/services/api';
 import { queryKeys } from '@/lib/query-keys';
-import { LEGAL } from '@/lib/legal';
 import { cn, formatDateTime } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
-import { useBrand } from '@/components/brand-provider';
+import { useBrand, useLegal } from '@/components/brand-provider';
 import { PageContainer, PageHeader } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import {
@@ -85,6 +84,7 @@ export default function DeleteAccountPage() {
   const queryClient = useQueryClient();
   const { session } = useSession();
   const brand = useBrand();
+  const legal = useLegal();
   const role = session?.role ?? null;
 
   const [scope, setScope] = React.useState<Scope>('ACCOUNT');
@@ -145,7 +145,7 @@ export default function DeleteAccountPage() {
                 {SCOPE_LABELS[open.scope]}
                 {open.organization ? ` · ${open.organization.name}` : ''} · submitted{' '}
                 {formatDateTime(open.createdAt)}. We complete verified requests within{' '}
-                {LEGAL.deletionDays} days and may email you at {session?.user.email} to confirm.
+                {legal.deletionDays} days and may email you at {session?.user.email} to confirm.
               </CardDescription>
             </CardHeader>
             {open.status === 'PENDING' ? (
@@ -156,11 +156,16 @@ export default function DeleteAccountPage() {
               </CardContent>
             ) : (
               <CardContent className="text-sm text-muted-foreground">
-                This request is already being processed. To stop it, email{' '}
-                <a href={`mailto:${LEGAL.privacyEmail}`} className="font-medium text-primary hover:underline">
-                  {LEGAL.privacyEmail}
-                </a>{' '}
-                quoting {open.reference}.
+                This request is already being processed.
+                {legal.privacyEmail ? (
+                  <>
+                    {' '}To stop it, email{' '}
+                    <a href={`mailto:${legal.privacyEmail}`} className="font-medium text-primary hover:underline">
+                      {legal.privacyEmail}
+                    </a>{' '}
+                    quoting {open.reference}.
+                  </>
+                ) : null}
               </CardContent>
             )}
           </Card>
@@ -296,11 +301,16 @@ export default function DeleteAccountPage() {
         ) : null}
 
         <p className="text-xs leading-relaxed text-muted-foreground">
-          You can also request deletion by emailing{' '}
-          <a href={`mailto:${LEGAL.privacyEmail}`} className="font-medium text-primary hover:underline">
-            {LEGAL.privacyEmail}
-          </a>
-          . Read the{' '}
+          {legal.privacyEmail ? (
+            <>
+              You can also request deletion by emailing{' '}
+              <a href={`mailto:${legal.privacyEmail}`} className="font-medium text-primary hover:underline">
+                {legal.privacyEmail}
+              </a>
+              .{' '}
+            </>
+          ) : null}
+          Read the{' '}
           <Link href="/data-deletion" className="font-medium text-primary hover:underline">
             Data Deletion Instructions
           </Link>{' '}

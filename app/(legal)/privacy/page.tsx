@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
 import { LegalValue } from '@/components/legal/placeholder';
-import { LEGAL, PHONE_HREF } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import { phoneHref, type Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,7 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 /** The product name for the current domain (Unichat or Repliva). */
 const P = <BrandName />;
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  return [
   {
     id: 'who-we-are',
     title: 'Who we are',
@@ -28,24 +29,32 @@ const sections: LegalSection[] = [
           Instagram Professional accounts, WhatsApp Business phone numbers and an optional website chat
           widget, and answer the messages they receive from a single shared inbox.
         </p>
+        {L.proprietor && L.address && L.phone && L.privacyEmail ? (
+          <>
+            <p>
+              The data controller is{' '}
+              <strong>
+                {L.operatorName}, operated by {L.proprietor} (sole proprietor)
+              </strong>
+              :
+            </p>
+            <ul>
+              <li>Address: {L.address}</li>
+              <li>
+                Phone: <a href={phoneHref(L.phone)}>{L.phone}</a>
+              </li>
+              <li>
+                Email: <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>
+              </li>
+            </ul>
+          </>
+        ) : (
+          <p>
+            The data controller is <strong>{L.operatorName}</strong>.
+          </p>
+        )}
         <p>
-          The data controller is{' '}
-          <strong>
-            {LEGAL.operatorName}, operated by {LEGAL.proprietor} (sole proprietor)
-          </strong>
-          :
-        </p>
-        <ul>
-          <li>Address: {LEGAL.address}</li>
-          <li>
-            Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
-          </li>
-          <li>
-            Email: <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>
-          </li>
-        </ul>
-        <p>
-          In this policy, “{P}”, “we”, “us” and “our” mean {LEGAL.operatorName}.
+          In this policy, “{P}”, “we”, “us” and “our” mean {L.operatorName}.
         </p>
         <p>
           {P} is an independent service. It is not owned, operated, sponsored or endorsed by Meta
@@ -64,7 +73,7 @@ const sections: LegalSection[] = [
           <li>
             <strong>Our customers and their team members</strong>: the people who sign up for {P},
             create a workspace, connect accounts and use the inbox. For their account information,{' '}
-            {LEGAL.operatorName} is the <strong>data controller</strong>.
+            {L.operatorName} is the <strong>data controller</strong>.
           </li>
           <li>
             <strong>People who message our customers</strong>: for example, someone who sends a
@@ -322,7 +331,7 @@ const sections: LegalSection[] = [
             Meta Platform Data is never used to train, fine-tune, or improve any AI model. When a
             customer enables optional AI features, message content is sent to the selected AI
             provider solely to generate a reply or reply suggestion for that customer, under the
-            provider’s no-training API terms, and is not retained by {LEGAL.operatorName} for any
+            provider’s no-training API terms, and is not retained by {L.operatorName} for any
             other purpose.
           </strong>
         </p>
@@ -378,7 +387,7 @@ const sections: LegalSection[] = [
               columns={['Provider', 'Purpose', 'When']}
               rows={[
                 [
-                  <LegalValue key="h" value={LEGAL.hostingProvider} label="HOSTING PROVIDER" />,
+                  <LegalValue key="h" value={L.hostingProvider} label="HOSTING PROVIDER" />,
                   'Servers, database and backups',
                   'Always',
                 ],
@@ -493,12 +502,18 @@ const sections: LegalSection[] = [
           <li>
             Request deletion of your account, your whole workspace, or only the messaging data synced
             from connected platforms from the <Link href="/delete-account">Delete account</Link> page
-            when signed in, or by emailing{' '}
-            <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>.
+            when signed in
+            {L.privacyEmail ? (
+              <>
+                , or by emailing{' '}
+                <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>
+              </>
+            ) : null}
+            .
           </li>
         </ul>
         <p>
-          We complete verified deletion requests within {LEGAL.deletionDays} days. Step-by-step
+          We complete verified deletion requests within {L.deletionDays} days. Step-by-step
           instructions are on our <Link href="/data-deletion">Data Deletion Instructions</Link> page.
         </p>
       </>
@@ -520,8 +535,18 @@ const sections: LegalSection[] = [
           <li>lodge a complaint with your local data protection authority.</li>
         </ul>
         <p>
-          You can update most account details yourself in {P}. For anything else, email{' '}
-          <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>. We may need to verify
+          You can update most account details yourself in {P}.{' '}
+          {L.privacyEmail ? (
+            <>
+              For anything else, email <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>.
+            </>
+          ) : (
+            <>
+              For anything else, sign in and use the{' '}
+              <Link href="/delete-account">Delete account</Link> page for deletion requests.
+            </>
+          )}{' '}
+          We may need to verify
           your identity before acting on a request, and we respond within the time the law requires.
           If you messaged a business that uses {P}, please send your request to that business. We
           will support it in responding.
@@ -534,7 +559,7 @@ const sections: LegalSection[] = [
     title: 'International data transfers',
     content: (
       <p>
-        Our servers are located in <LegalValue value={LEGAL.hostingRegion} label="HOSTING REGION" />,
+        Our servers are located in <LegalValue value={L.hostingRegion} label="HOSTING REGION" />,
         and the service is operated and supported from Bangladesh, so your information is processed in
         both countries. Meta, Anthropic and OpenAI may also process data in the United States and other
         countries. Where personal data from the EEA or UK is transferred to a country without an
@@ -592,32 +617,42 @@ const sections: LegalSection[] = [
   {
     id: 'contact',
     title: 'Contact us',
-    content: (
-      <>
-        <p>For privacy questions or requests, contact the data controller:</p>
-        <ul>
-          <li>
-            <strong>
-              {LEGAL.operatorName}, operated by {LEGAL.proprietor} (sole proprietor)
-            </strong>
-          </li>
-          <li>Address: {LEGAL.address}</li>
-          <li>
-            Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
-          </li>
-          <li>
-            Email: <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>
-          </li>
-        </ul>
+    content:
+      L.proprietor && L.address && L.phone && L.privacyEmail ? (
+        <>
+          <p>For privacy questions or requests, contact the data controller:</p>
+          <ul>
+            <li>
+              <strong>
+                {L.operatorName}, operated by {L.proprietor} (sole proprietor)
+              </strong>
+            </li>
+            <li>Address: {L.address}</li>
+            <li>
+              Phone: <a href={phoneHref(L.phone)}>{L.phone}</a>
+            </li>
+            <li>
+              Email: <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>
+            </li>
+          </ul>
+          <p>
+            More ways to reach us are on our <Link href="/contact">Contact</Link> page.
+          </p>
+        </>
+      ) : (
         <p>
-          More ways to reach us are on our <Link href="/contact">Contact</Link> page.
+          Signed-in users can manage their data and request deletion from the{' '}
+          <Link href="/delete-account">Delete account</Link> page. If you messaged a business that
+          uses {P}, please contact that business directly. See also our{' '}
+          <Link href="/contact">Contact</Link> page.
         </p>
-      </>
-    ),
+      ),
   },
 ];
+}
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const L = await getLegal();
   return (
     <LegalPage
       title="Privacy Policy"
@@ -642,7 +677,7 @@ export default function PrivacyPolicyPage() {
           </li>
         </ul>
       }
-      sections={sections}
+      sections={buildSections(L)} legal={L}
     />
   );
 }

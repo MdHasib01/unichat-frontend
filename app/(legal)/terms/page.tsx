@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BusinessDetails, LegalPage, type LegalSection } from '@/components/legal/legal-page';
 import { LegalValue } from '@/components/legal/placeholder';
-import { LEGAL } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import type { Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,14 +17,15 @@ export async function generateMetadata(): Promise<Metadata> {
 /** The product name for the current domain (Unichat or Repliva). */
 const P = <BrandName />;
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  return [
   {
     id: 'acceptance',
     title: 'Acceptance of these terms',
     content: (
       <>
         <p>
-          These Terms of Service (“Terms”) are an agreement between you and {LEGAL.operatorName} (“we”,
+          These Terms of Service (“Terms”) are an agreement between you and {L.operatorName} (“we”,
           “us”) and govern your use of {P}, including our website, web application, APIs and website
           chat widget (the “Service”).
         </p>
@@ -61,8 +62,17 @@ const sections: LegalSection[] = [
         <li>You must give accurate information and keep it up to date.</li>
         <li>
           Keep your password confidential. You are responsible for all activity under your account.
-          Tell us immediately at <a href={`mailto:${LEGAL.supportEmail}`}>{LEGAL.supportEmail}</a> if
-          you suspect unauthorized access.
+          {L.supportEmail ? (
+            <>
+              {' '}Tell us immediately at <a href={`mailto:${L.supportEmail}`}>{L.supportEmail}</a> if
+              you suspect unauthorized access.
+            </>
+          ) : (
+            <>
+              {' '}If you suspect unauthorized access, change your password and sign out your other
+              sessions under Your account → Security.
+            </>
+          )}
         </li>
         <li>Accounts are for individual people. Do not share a login between several people. Invite them as team members instead.</li>
       </ul>
@@ -228,7 +238,7 @@ const sections: LegalSection[] = [
     content: (
       <p>
         The Service, including its software, design, text, graphics and logos (but not Your
-        Content), is owned by {LEGAL.operatorName} or its licensors and protected by intellectual
+        Content), is owned by {L.operatorName} or its licensors and protected by intellectual
         property laws. We grant you a limited, non-exclusive, non-transferable, revocable right to use
         the Service under these Terms. You may not copy, modify, distribute, sell or reverse-engineer
         it, except where the law expressly allows this. If you send us feedback, we may use it
@@ -300,9 +310,13 @@ const sections: LegalSection[] = [
         Our <Link href="/privacy">Privacy Policy</Link> explains how we handle personal information.
         For personal data about your customers that we process on your behalf, you are the
         controller, and we process it only to provide the Service and on your documented
-        instructions. These Terms and your configuration of the Service are those instructions. If
-        you need a data processing agreement, contact{' '}
-        <a href={`mailto:${LEGAL.legalEmail}`}>{LEGAL.legalEmail}</a>.
+        instructions. These Terms and your configuration of the Service are those instructions.
+        {L.legalEmail ? (
+          <>
+            {' '}If you need a data processing agreement, contact{' '}
+            <a href={`mailto:${L.legalEmail}`}>{L.legalEmail}</a>.
+          </>
+        ) : null}
       </p>
     ),
   },
@@ -349,7 +363,7 @@ const sections: LegalSection[] = [
     title: 'Indemnification',
     content: (
       <p>
-        To the extent the law allows, you will defend and indemnify {LEGAL.operatorName} against
+        To the extent the law allows, you will defend and indemnify {L.operatorName} against
         third-party claims, and the resulting losses and reasonable costs, that arise from Your
         Content, the messages sent from your workspace, your breach of these Terms or the Acceptable
         Use Policy, or your violation of any law or third-party rights, including a connected
@@ -362,9 +376,9 @@ const sections: LegalSection[] = [
     title: 'Governing law and disputes',
     content: (
       <p>
-        These Terms are governed by <LegalValue value={LEGAL.governingLaw} label="GOVERNING LAW" />,
+        These Terms are governed by <LegalValue value={L.governingLaw} label="GOVERNING LAW" />,
         without regard to its conflict-of-law rules. Disputes will be resolved exclusively by{' '}
-        <LegalValue value={LEGAL.jurisdictionCourts} label="COMPETENT COURTS" />, unless mandatory law
+        <LegalValue value={L.jurisdictionCourts} label="COMPETENT COURTS" />, unless mandatory law
         gives you the right to bring proceedings where you live. Before starting formal
         proceedings, please contact us so we can try to resolve the issue informally.
       </p>
@@ -399,8 +413,12 @@ const sections: LegalSection[] = [
     title: 'Contact',
     content: (
       <>
-        <p>Questions about these Terms? Contact us:</p>
-        <BusinessDetails />
+        {L.supportEmail ? (
+          <>
+            <p>Questions about these Terms? Contact us:</p>
+            <BusinessDetails legal={L} />
+          </>
+        ) : null}
         <p>
           See also our <Link href="/contact">Contact</Link> page.
         </p>
@@ -408,21 +426,25 @@ const sections: LegalSection[] = [
     ),
   },
 ];
+}
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const L = await getLegal();
   return (
     <LegalPage
       title="Terms of Service"
       intro={
-        <>
-          <p>
-            {P} is provided by {LEGAL.operatorName}, a business operated by {LEGAL.proprietor} (sole
-            proprietor).
-          </p>
-          <BusinessDetails />
-        </>
+        L.proprietor ? (
+          <>
+            <p>
+              {P} is provided by {L.operatorName}, a business operated by {L.proprietor} (sole
+              proprietor).
+            </p>
+            <BusinessDetails legal={L} />
+          </>
+        ) : undefined
       }
-      sections={sections}
+      sections={buildSections(L)} legal={L}
     />
   );
 }

@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { BrandProvider } from '@/components/brand-provider';
-import { getBrand } from '@/lib/brand-server';
+import { getBrand, legalFor } from '@/lib/brand-server';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -53,7 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="min-h-screen font-sans">
-        <BrandProvider brand={brand}>
+        <BrandProvider brand={brand} legal={legalFor(brand)}>
           <Providers>{children}</Providers>
         </BrandProvider>
       </body>

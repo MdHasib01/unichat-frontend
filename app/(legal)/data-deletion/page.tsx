@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
-import { LEGAL, PHONE_HREF } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import { phoneHref, type Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,9 +15,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** The product name for the current domain (Unichat or Repliva). */
 const P = <BrandName />;
-const deletionMail = `mailto:${LEGAL.privacyEmail}?subject=${encodeURIComponent('Data deletion request')}`;
+const deletionMail = (email: string) => `mailto:${email}?subject=${encodeURIComponent('Data deletion request')}`;
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  const email = L.privacyEmail;
+  const phone = L.phone;
+
+  return [
   {
     id: 'disconnect-channel',
     title: 'Disconnect a single Facebook Page, Instagram account or WhatsApp number',
@@ -108,7 +112,8 @@ const sections: LegalSection[] = [
           <strong>All synced messaging data</strong>: if you want every conversation, message and
           contact received from your connected platforms removed while keeping your account and
           workspace settings, submit a request for <em>“Synchronized messaging data only”</em> on the{' '}
-          <Link href="/delete-account">Delete account</Link> page (owners and admins), or email us.
+          <Link href="/delete-account">Delete account</Link> page (owners and admins)
+          {email ? ', or email us' : ''}.
         </p>
       </>
     ),
@@ -150,48 +155,70 @@ const sections: LegalSection[] = [
       </>
     ),
   },
-  {
-    id: 'by-email',
-    title: 'Request deletion by email',
-    content: (
-      <>
-        <p>
-          If you cannot sign in, or you prefer email, write to{' '}
-          <a href={deletionMail}>{LEGAL.privacyEmail}</a> with the subject “Data deletion request”.
-          Please include:
-        </p>
-        <ul>
-          <li>the email address of your {P} account (send the request from that address if you can);</li>
-          <li>the workspace (business) name;</li>
-          <li>what you want deleted (account, workspace or synced messaging data); and</li>
-          <li>if relevant, the names of the connected Facebook Pages, Instagram accounts or WhatsApp numbers.</li>
-        </ul>
-        <p>
-          <strong>If you messaged a business that uses {P}</strong>, that business controls your
-          conversation. Ask the business to delete it. It can do this from its Contacts page. If
-          you cannot reach the business, email us with the business’s name and the platform you
-          used, and we will pass on your request and help the business respond.
-        </p>
-        <p>
-          <strong>Response time:</strong> we acknowledge within {LEGAL.acknowledgeHours} hours and
-          complete verified requests within {LEGAL.deletionDays} days.
-        </p>
-        <p>
-          You can also call us on <a href={PHONE_HREF}>{LEGAL.phone}</a>. We will ask you to confirm
-          the request by email so we have a written record of it.
-        </p>
-        <p>We may ask you to confirm your identity before deleting anything, to protect your data from fraudulent requests.</p>
-      </>
-    ),
-  },
+  ...(email && phone
+    ? [
+        {
+          id: 'by-email',
+          title: 'Request deletion by email',
+          content: (
+            <>
+              <p>
+                If you cannot sign in, or you prefer email, write to{' '}
+                <a href={deletionMail(email)}>{email}</a> with the subject “Data deletion request”.
+                Please include:
+              </p>
+              <ul>
+                <li>the email address of your {P} account (send the request from that address if you can);</li>
+                <li>the workspace (business) name;</li>
+                <li>what you want deleted (account, workspace or synced messaging data); and</li>
+                <li>if relevant, the names of the connected Facebook Pages, Instagram accounts or WhatsApp numbers.</li>
+              </ul>
+              <p>
+                <strong>If you messaged a business that uses {P}</strong>, that business controls your
+                conversation. Ask the business to delete it. It can do this from its Contacts page. If
+                you cannot reach the business, email us with the business’s name and the platform you
+                used, and we will pass on your request and help the business respond.
+              </p>
+              <p>
+                <strong>Response time:</strong> we acknowledge within {L.acknowledgeHours} hours and
+                complete verified requests within {L.deletionDays} days.
+              </p>
+              <p>
+                You can also call us on <a href={phoneHref(phone)}>{phone}</a>. We will ask you to confirm
+                the request by email so we have a written record of it.
+              </p>
+              <p>We may ask you to confirm your identity before deleting anything, to protect your data from fraudulent requests.</p>
+            </>
+          ),
+        },
+      ]
+    : [
+        {
+          id: 'messaged-a-business',
+          title: 'If you messaged a business',
+          content: (
+            <>
+              <p>
+                <strong>If you messaged a business that uses {P}</strong>, that business controls your
+                conversation. Ask the business to delete it. It can do this from its Contacts page.
+              </p>
+              <p>
+                If you can no longer sign in to {P}, you can still stop all access by removing {P} in
+                your Facebook, Instagram or Meta Business Suite settings (see above).
+              </p>
+            </>
+          ),
+        },
+      ]),
   {
     id: 'timing',
     title: 'Timing and what we keep',
     content: (
       <ul>
         <li>
-          For email requests, we acknowledge within {LEGAL.acknowledgeHours} hours and complete
-          verified requests within {LEGAL.deletionDays} days.
+          {email
+            ? `For email requests, we acknowledge within ${L.acknowledgeHours} hours and complete verified requests within ${L.deletionDays} days.`
+            : `We complete verified deletion requests within ${L.deletionDays} days.`}
         </li>
         <li>Deleted data may remain in database backups until they rotate out (currently within 14 days). It is not restored into the live service.</li>
         <li>
@@ -209,22 +236,33 @@ const sections: LegalSection[] = [
   {
     id: 'contact',
     title: 'Questions',
-    content: (
-      <>
+    content:
+      email && phone && L.proprietor && L.address ? (
+        <>
+          <p>
+            Email <a href={`mailto:${email}`}>{email}</a>, call{' '}
+            <a href={phoneHref(phone)}>{phone}</a> or visit our <Link href="/contact">Contact</Link>{' '}
+            page. For more on how we handle data, see our <Link href="/privacy">Privacy Policy</Link>.
+          </p>
+          <p>
+            {L.operatorName} — Proprietor: {L.proprietor} · {L.address}
+          </p>
+        </>
+      ) : (
         <p>
-          Email <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>, call{' '}
-          <a href={PHONE_HREF}>{LEGAL.phone}</a> or visit our <Link href="/contact">Contact</Link>{' '}
-          page. For more on how we handle data, see our <Link href="/privacy">Privacy Policy</Link>.
+          See our <Link href="/contact">Contact</Link> page. For more on how we handle data, see our{' '}
+          <Link href="/privacy">Privacy Policy</Link>.
         </p>
-        <p>
-          {LEGAL.operatorName} — Proprietor: {LEGAL.proprietor} · {LEGAL.address}
-        </p>
-      </>
-    ),
+      ),
   },
 ];
+}
 
-export default function DataDeletionPage() {
+export default async function DataDeletionPage() {
+  const L = await getLegal();
+  const email = L.privacyEmail;
+  const phone = L.phone;
+
   return (
     <LegalPage
       title="Data Deletion Instructions"
@@ -241,18 +279,30 @@ export default function DataDeletionPage() {
             <strong>Stop access</strong>: Integrations → Disconnect. Access tokens are deleted
             immediately.
           </li>
-          <li>
-            <strong>Delete data</strong>: sign in and use <Link href="/delete-account">Delete account</Link>,
-            email <a href={deletionMail}>{LEGAL.privacyEmail}</a> or call{' '}
-            <a href={PHONE_HREF}>{LEGAL.phone}</a>. No sign-in is needed to send a request by email.
-          </li>
-          <li>
-            We acknowledge email requests within {LEGAL.acknowledgeHours} hours and complete verified
-            requests within {LEGAL.deletionDays} days.
-          </li>
+          {email && phone ? (
+            <>
+              <li>
+                <strong>Delete data</strong>: sign in and use <Link href="/delete-account">Delete account</Link>,
+                email <a href={deletionMail(email)}>{email}</a> or call{' '}
+                <a href={phoneHref(phone)}>{phone}</a>. No sign-in is needed to send a request by email.
+              </li>
+              <li>
+                We acknowledge email requests within {L.acknowledgeHours} hours and complete verified
+                requests within {L.deletionDays} days.
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <strong>Delete data</strong>: sign in and use <Link href="/delete-account">Delete account</Link>.
+              </li>
+              <li>We complete verified deletion requests within {L.deletionDays} days.</li>
+            </>
+          )}
         </ul>
       }
-      sections={sections}
+      sections={buildSections(L)}
+      legal={L}
     />
   );
 }

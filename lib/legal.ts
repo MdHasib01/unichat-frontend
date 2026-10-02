@@ -1,71 +1,52 @@
 /**
  * Facts the legal pages rely on, kept in one place so they stay consistent.
  *
- * The business identity below must match the documents given to Meta for
- * Business Verification character for character — do not reword it, and do
- * not override it per environment.
+ * The facts depend on the visitor's domain, like the brand (lib/brand.ts):
  *
- * A value of `null` is information nobody has supplied yet. The pages render
- * it as a highlighted placeholder rather than guessing.
+ * - Repliva (repliva.site and every other host) shows the full business
+ *   identity. It must match the documents given to Meta for Business
+ *   Verification character for character — do not reword it, and do not
+ *   override it per environment.
+ * - Unichat (its own domain) shows no personal or Repliva details at all: no
+ *   proprietor, address, phone, hours or email. Those fields are `null`, and
+ *   every page leaves out whatever is missing.
  *
- * The product name, logo and site address depend on the visitor's domain and
- * live in lib/brand.ts — use useBrand() / getBrand() for those.
+ * The values live in lib/brand-server.ts, which only server code can import,
+ * so one brand's details never ship in the JavaScript sent to the other
+ * domain. Read them with getLegal() on the server or useLegal() on the client.
  */
-const BUSINESS_EMAIL = 'support@repliva.site';
-
-export const LEGAL = {
-  /** The business that operates the service and acts as data controller — the same for every brand. */
-  operatorName: 'Repliva',
+export interface Legal {
+  /** The business that operates the service and acts as data controller. */
+  operatorName: string;
   /** Sole proprietor of the business. */
-  proprietor: 'Md. Hasibuzzaman',
-  address: 'Noapara, Abhaynagar, Jashore 7460, Bangladesh',
-  phone: '+8801411573437',
-  businessHours: 'Open 24/7. Email support is monitored daily; we aim to reply within 24 hours.',
+  proprietor: string | null;
+  address: string | null;
+  phone: string | null;
+  businessHours: string | null;
 
   /** One mailbox handles support, privacy and legal requests. */
-  supportEmail: BUSINESS_EMAIL,
-  privacyEmail: BUSINESS_EMAIL,
-  legalEmail: BUSINESS_EMAIL,
+  supportEmail: string | null;
+  privacyEmail: string | null;
+  legalEmail: string | null;
 
   /** Shown as "Last updated" on every policy. Change it whenever a policy changes. */
-  lastUpdated: '3 October 2026',
-
+  lastUpdated: string;
   /** How long we allow ourselves to complete a verified deletion request. */
-  deletionDays: 30,
+  deletionDays: number;
   /** How quickly an emailed request is acknowledged. */
-  acknowledgeHours: 24,
+  acknowledgeHours: number;
 
-  governingLaw: 'the laws of Bangladesh' as string | null,
-  jurisdictionCourts: 'the courts of Jashore, Bangladesh' as string | null,
-
+  governingLaw: string;
+  jurisdictionCourts: string;
   /** The company hosting the servers and database. */
-  hostingProvider: 'Database Mart (databasemart.com)' as string | null,
+  hostingProvider: string;
   /** Where the servers are; reads as "Our servers are located in …". */
-  hostingRegion: 'the United States' as string | null,
-} as const;
+  hostingRegion: string;
+}
 
-/** "tel:" link for LEGAL.phone. */
-export const PHONE_HREF = `tel:${LEGAL.phone}`;
-
-/**
- * Legal facts still missing. Every one shows as a visible [PLACEHOLDER] on the
- * public pages, and Meta's reviewers reject policies with placeholders — so a
- * production build says so loudly.
- */
-export const LEGAL_MISSING = (
-  [
-    'governingLaw',
-    'jurisdictionCourts',
-    'hostingProvider',
-    'hostingRegion',
-  ] as const
-).filter((key) => LEGAL[key] === null);
-
-if (process.env.NODE_ENV === 'production' && LEGAL_MISSING.length && typeof window === 'undefined') {
-  console.warn(
-    `[legal] frontend/lib/legal.ts is missing: ${LEGAL_MISSING.join(', ')}. ` +
-      'The legal pages show placeholders until these are set — fill them before Meta App Review.',
-  );
+/** "tel:" link for a phone number. */
+export function phoneHref(phone: string): string {
+  return `tel:${phone}`;
 }
 
 export interface LegalLink {

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
-import { LEGAL } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import type { Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
 /** The product name for the current domain (Unichat or Repliva). */
 const P = <BrandName />;
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  return [
   {
     id: 'what',
     title: 'What cookies and similar technologies are',
@@ -134,13 +135,21 @@ const sections: LegalSection[] = [
     title: 'Contact',
     content: (
       <p>
-        Questions? Email <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>. See also our{' '}
+        {L.privacyEmail ? (
+          <>
+            Questions? Email <a href={`mailto:${L.privacyEmail}`}>{L.privacyEmail}</a>. See also our{' '}
+          </>
+        ) : (
+          <>See our </>
+        )}
         <Link href="/privacy">Privacy Policy</Link>.
       </p>
     ),
   },
 ];
+}
 
-export default function CookiePolicyPage() {
-  return <LegalPage title="Cookie Policy" sections={sections} />;
+export default async function CookiePolicyPage() {
+  const L = await getLegal();
+  return <LegalPage title="Cookie Policy" sections={buildSections(L)} legal={L} />;
 }

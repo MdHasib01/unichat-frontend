@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
-import { LEGAL } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import type { Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -66,7 +66,8 @@ const PERMISSIONS: Array<[string, string]> = [
   ],
 ];
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  return [
   {
     id: 'what',
     title: 'What we do with Meta platforms',
@@ -222,7 +223,7 @@ const sections: LegalSection[] = [
         <li>Access tokens are encrypted at rest (AES-256-GCM), and every webhook is checked against Meta’s signature.</li>
         <li>
           You can ask us to delete your data at any time. We complete verified requests within{' '}
-          {LEGAL.deletionDays} days (see <Link href="/data-deletion">Data Deletion</Link>).
+          {L.deletionDays} days (see <Link href="/data-deletion">Data Deletion</Link>).
         </li>
       </ul>
     ),
@@ -263,8 +264,10 @@ const sections: LegalSection[] = [
     ),
   },
 ];
+}
 
-export default function MetaIntegrationPage() {
+export default async function MetaIntegrationPage() {
+  const L = await getLegal();
   return (
     <LegalPage
       title="Meta Integration"
@@ -282,7 +285,7 @@ export default function MetaIntegrationPage() {
           <li>Meta Platform Data is never sold, never used for ads and never used to train AI models.</li>
         </ul>
       }
-      sections={sections}
+      sections={buildSections(L)} legal={L}
     />
   );
 }

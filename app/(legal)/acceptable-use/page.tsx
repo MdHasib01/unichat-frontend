@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, type LegalSection } from '@/components/legal/legal-page';
-import { LEGAL } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import type { Legal } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
 /** The product name for the current domain (Unichat or Repliva). */
 const P = <BrandName />;
 
-const sections: LegalSection[] = [
+function buildSections(L: Legal): LegalSection[] {
+  return [
   {
     id: 'spam',
     title: 'Spam and unsolicited messages',
@@ -130,15 +131,21 @@ const sections: LegalSection[] = [
           give you notice and a chance to fix the problem.
         </p>
         <p>
-          This policy is part of our <Link href="/terms">Terms of Service</Link>. To report abuse,
-          email <a href={`mailto:${LEGAL.legalEmail}`}>{LEGAL.legalEmail}</a>.
+          This policy is part of our <Link href="/terms">Terms of Service</Link>.
+          {L.legalEmail ? (
+            <>
+              {' '}To report abuse, email <a href={`mailto:${L.legalEmail}`}>{L.legalEmail}</a>.
+            </>
+          ) : null}
         </p>
       </>
     ),
   },
 ];
+}
 
-export default function AcceptableUsePage() {
+export default async function AcceptableUsePage() {
+  const L = await getLegal();
   return (
     <LegalPage
       title="Acceptable Use Policy"
@@ -149,7 +156,7 @@ export default function AcceptableUsePage() {
           {P} in the ways listed below.
         </p>
       }
-      sections={sections}
+      sections={buildSections(L)} legal={L}
     />
   );
 }

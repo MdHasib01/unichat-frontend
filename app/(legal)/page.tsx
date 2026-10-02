@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Bot, Inbox, ShieldCheck, Users, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SignedInRedirect } from '@/components/legal/signed-in-redirect';
-import { LEGAL, PHONE_HREF } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import { phoneHref } from '@/lib/legal';
+import { getBrand, getLegal } from '@/lib/brand-server';
 
 /**
  * Public home page. Meta's Business Verification and App Review both visit
@@ -13,10 +13,11 @@ import { getBrand } from '@/lib/brand-server';
  */
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { name } = await getBrand();
+  const [{ name }, legal] = await Promise.all([getBrand(), getLegal()]);
+  const description = `${name} is a shared inbox for businesses to read and reply to messages from their own customers on Facebook Messenger, Instagram Direct, WhatsApp Business and website chat.`;
   return {
     title: { absolute: `${name} — one inbox for every customer conversation` },
-    description: `${name} is a shared inbox for businesses to read and reply to messages from their own customers on Facebook Messenger, Instagram Direct, WhatsApp Business and website chat. Operated by ${LEGAL.operatorName}, ${LEGAL.address}.`,
+    description: legal.address ? `${description} Operated by ${legal.operatorName}, ${legal.address}.` : description,
   };
 }
 
@@ -44,7 +45,8 @@ const FEATURES = [
 ];
 
 export default async function HomePage() {
-  const { name: P } = await getBrand();
+  const [{ name: P }, legal] = await Promise.all([getBrand(), getLegal()]);
+  const { supportEmail, phone } = legal;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
@@ -108,11 +110,13 @@ export default async function HomePage() {
 
       <section className="mt-10 grid gap-4 text-sm sm:grid-cols-2">
         <div>
-          <h2 className="text-base font-semibold text-foreground">About {LEGAL.operatorName}</h2>
-          <p className="mt-2 leading-relaxed text-muted-foreground">
-            {P} is built and operated by {LEGAL.operatorName}. Proprietor: {LEGAL.proprietor}.
-          </p>
-          <p className="mt-2 leading-relaxed text-muted-foreground">{LEGAL.address}</p>
+          <h2 className="text-base font-semibold text-foreground">About {legal.operatorName}</h2>
+          {legal.proprietor ? (
+            <p className="mt-2 leading-relaxed text-muted-foreground">
+              {P} is built and operated by {legal.operatorName}. Proprietor: {legal.proprietor}.
+            </p>
+          ) : null}
+          {legal.address ? <p className="mt-2 leading-relaxed text-muted-foreground">{legal.address}</p> : null}
           <p className="mt-2 leading-relaxed text-muted-foreground">
             {P} is{' '}
             <Link href="/pricing" className="font-medium text-primary hover:underline">
@@ -123,19 +127,25 @@ export default async function HomePage() {
         </div>
         <div>
           <h2 className="text-base font-semibold text-foreground">Contact</h2>
-          <p className="mt-2 leading-relaxed text-muted-foreground">
-            Support, privacy and data deletion:{' '}
-            <a href={`mailto:${LEGAL.supportEmail}`} className="font-medium text-primary hover:underline">
-              {LEGAL.supportEmail}
-            </a>
-          </p>
-          <p className="mt-2 leading-relaxed text-muted-foreground">
-            Phone:{' '}
-            <a href={PHONE_HREF} className="font-medium text-primary hover:underline">
-              {LEGAL.phone}
-            </a>
-          </p>
-          <p className="mt-2 leading-relaxed text-muted-foreground">{LEGAL.businessHours}</p>
+          {supportEmail ? (
+            <p className="mt-2 leading-relaxed text-muted-foreground">
+              Support, privacy and data deletion:{' '}
+              <a href={`mailto:${supportEmail}`} className="font-medium text-primary hover:underline">
+                {supportEmail}
+              </a>
+            </p>
+          ) : null}
+          {phone ? (
+            <p className="mt-2 leading-relaxed text-muted-foreground">
+              Phone:{' '}
+              <a href={phoneHref(phone)} className="font-medium text-primary hover:underline">
+                {phone}
+              </a>
+            </p>
+          ) : null}
+          {legal.businessHours ? (
+            <p className="mt-2 leading-relaxed text-muted-foreground">{legal.businessHours}</p>
+          ) : null}
           <p className="mt-2">
             <Link href="/contact" className="font-medium text-primary hover:underline">
               All contact options →

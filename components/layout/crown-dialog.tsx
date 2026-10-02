@@ -3,8 +3,7 @@
 import * as React from 'react';
 import { Crown, Lock, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BrandName, useBrand } from '@/components/brand-provider';
-import { LEGAL } from '@/lib/legal';
+import { BrandName, useBrand, useLegal } from '@/components/brand-provider';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +31,7 @@ export function CrownDialogProvider({ children }: { children: React.ReactNode })
   const [href, setHref] = React.useState<string | null>(null);
   const service = href ? CROWN_SERVICES[href] : null;
   const brand = useBrand();
+  const { supportEmail } = useLegal();
 
   const value = React.useMemo(() => ({ open: (target: string) => setHref(target) }), []);
 
@@ -65,16 +65,18 @@ export function CrownDialogProvider({ children }: { children: React.ReactNode })
             <Button variant="outline" onClick={() => setHref(null)}>
               Close
             </Button>
-            <Button asChild>
-              <a
-                href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(
-                  `Interested in an upcoming ${brand.name} module`,
-                )}`}
-              >
-                <Mail className="h-4 w-4" />
-                Tell us you&apos;re interested
-              </a>
-            </Button>
+            {supportEmail ? (
+              <Button asChild>
+                <a
+                  href={`mailto:${supportEmail}?subject=${encodeURIComponent(
+                    `Interested in an upcoming ${brand.name} module`,
+                  )}`}
+                >
+                  <Mail className="h-4 w-4" />
+                  Tell us you&apos;re interested
+                </a>
+              </Button>
+            ) : null}
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -3,11 +3,10 @@
 import Link from 'next/link';
 import { ArrowLeft, Crown, Lock, Mail } from 'lucide-react';
 import { PageContainer } from '@/components/layout/app-shell';
-import { BrandName } from '@/components/brand-provider';
+import { BrandName, useLegal } from '@/components/brand-provider';
 import { Button } from '@/components/ui/button';
 import { Badge, Card } from '@/components/ui/primitives';
 import { CROWN_SERVICES } from '@/lib/navigation';
-import { LEGAL } from '@/lib/legal';
 
 /**
  * Landing page for a crown-marked module (spec sections 29 and 48).
@@ -17,6 +16,7 @@ import { LEGAL } from '@/lib/legal';
  * honest availability notice.
  */
 export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | string }) {
+  const { supportEmail } = useLegal();
   const service = CROWN_SERVICES[route] ?? {
     title: 'Coming soon',
     description: 'This module is on the roadmap.',
@@ -75,14 +75,14 @@ export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | str
             </div>
           </div>
 
-          <Button asChild className="w-full sm:w-auto">
-            <a
-              href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(`Interested in ${service.title}`)}`}
-            >
-              <Mail className="h-4 w-4" />
-              Register your interest
-            </a>
-          </Button>
+          {supportEmail ? (
+            <Button asChild className="w-full sm:w-auto">
+              <a href={`mailto:${supportEmail}?subject=${encodeURIComponent(`Interested in ${service.title}`)}`}>
+                <Mail className="h-4 w-4" />
+                Register your interest
+              </a>
+            </Button>
+          ) : null}
         </div>
       </Card>
     </PageContainer>

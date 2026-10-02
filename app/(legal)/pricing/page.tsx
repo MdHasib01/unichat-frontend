@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LEGAL } from '@/lib/legal';
-import { getBrand } from '@/lib/brand-server';
+import { getBrand, getLegal } from '@/lib/brand-server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { name } = await getBrand();
@@ -23,7 +22,7 @@ const INCLUDED = [
 ];
 
 export default async function PricingPage() {
-  const { name: P } = await getBrand();
+  const [{ name: P }, { supportEmail }] = await Promise.all([getBrand(), getLegal()]);
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -61,11 +60,18 @@ export default async function PricingPage() {
           paid plan.
         </p>
         <p className="mt-2">
-          Questions? Email{' '}
-          <a href={`mailto:${LEGAL.supportEmail}`} className="font-medium text-primary hover:underline">
-            {LEGAL.supportEmail}
-          </a>{' '}
-          or see our <Link href="/terms" className="font-medium text-primary hover:underline">Terms of Service</Link>.
+          {supportEmail ? (
+            <>
+              Questions? Email{' '}
+              <a href={`mailto:${supportEmail}`} className="font-medium text-primary hover:underline">
+                {supportEmail}
+              </a>{' '}
+              or see our{' '}
+            </>
+          ) : (
+            <>See our </>
+          )}
+          <Link href="/terms" className="font-medium text-primary hover:underline">Terms of Service</Link>.
         </p>
       </section>
     </div>

@@ -1,18 +1,26 @@
-import { LEGAL, PHONE_HREF } from '@/lib/legal';
+import { phoneHref, type Legal } from '@/lib/legal';
 
-/** The business identity as a list, for use inside policy prose. */
-export function BusinessDetails() {
+/**
+ * The business identity as a list, for use inside policy prose. Only the
+ * details the brand publishes are listed (Unichat publishes none beyond its
+ * name).
+ */
+export function BusinessDetails({ legal }: { legal: Legal }) {
   return (
     <ul>
-      <li>Business name: {LEGAL.operatorName}</li>
-      <li>Proprietor: {LEGAL.proprietor}</li>
-      <li>Address: {LEGAL.address}</li>
-      <li>
-        Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
-      </li>
-      <li>
-        Email: <a href={`mailto:${LEGAL.supportEmail}`}>{LEGAL.supportEmail}</a>
-      </li>
+      <li>Business name: {legal.operatorName}</li>
+      {legal.proprietor ? <li>Proprietor: {legal.proprietor}</li> : null}
+      {legal.address ? <li>Address: {legal.address}</li> : null}
+      {legal.phone ? (
+        <li>
+          Phone: <a href={phoneHref(legal.phone)}>{legal.phone}</a>
+        </li>
+      ) : null}
+      {legal.supportEmail ? (
+        <li>
+          Email: <a href={`mailto:${legal.supportEmail}`}>{legal.supportEmail}</a>
+        </li>
+      ) : null}
     </ul>
   );
 }
@@ -43,6 +51,7 @@ export function LegalPage({
   summary,
   sections,
   showToc = true,
+  legal,
 }: {
   title: string;
   intro?: React.ReactNode;
@@ -50,13 +59,15 @@ export function LegalPage({
   summary?: React.ReactNode;
   sections: LegalSection[];
   showToc?: boolean;
+  /** The brand's legal facts, from getLegal(). */
+  legal: Legal;
 }) {
   return (
     <article className="mx-auto w-full max-w-3xl">
       <header>
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">Legal</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Last updated: {LEGAL.lastUpdated}</p>
+        <p className="mt-2 text-sm text-muted-foreground">Last updated: {legal.lastUpdated}</p>
         {intro ? <div className={`mt-5 ${PROSE}`}>{intro}</div> : null}
       </header>
 

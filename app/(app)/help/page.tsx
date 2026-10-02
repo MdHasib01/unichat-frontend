@@ -17,10 +17,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LEGAL } from '@/lib/legal';
 import { useSession } from '@/hooks/use-session';
 import { LegalFooter } from '@/components/legal/legal-footer';
-import { useBrand } from '@/components/brand-provider';
+import { useBrand, useLegal } from '@/components/brand-provider';
 import { PageContainer, PageHeader } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import {
@@ -172,6 +171,7 @@ const FAQS = [
 export default function HelpPage() {
   const { session } = useSession();
   const brand = useBrand();
+  const legal = useLegal();
   const [query, setQuery] = React.useState('');
   const [openFaq, setOpenFaq] = React.useState<number | null>(0);
 
@@ -297,6 +297,7 @@ export default function HelpPage() {
         </Card>
       ) : null}
 
+      {legal.supportEmail ? (
       <Card className="mt-4">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -305,13 +306,13 @@ export default function HelpPage() {
           </CardTitle>
           <CardDescription>
             Send us the details and we will pick it up. Mentioning your workspace name helps us find
-            it quickly. {LEGAL.businessHours}
+            it quickly. {legal.businessHours}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button asChild>
             <a
-              href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(
+              href={`mailto:${legal.supportEmail}?subject=${encodeURIComponent(
                 `${brand.name} support — ${session?.organization?.name ?? 'workspace'}`,
               )}`}
             >
@@ -324,6 +325,7 @@ export default function HelpPage() {
           </Button>
         </CardContent>
       </Card>
+      ) : null}
 
       <LegalFooter className="mt-6" />
     </PageContainer>
