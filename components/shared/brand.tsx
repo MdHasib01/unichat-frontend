@@ -36,14 +36,18 @@ function UnichatMark({ className }: { className?: string }) {
 export function BrandLogo({ className }: { className?: string }) {
   const brand = useBrand();
   if (brand.id === 'unichat') return <UnichatMark className={className} />;
+  // The Repliva badge is wide (1182×691 source), so it keeps its own width at
+  // the shared 28px height rather than being squeezed into a square. width and
+  // height are the display size, so Next serves a small 1x/2x image, not the
+  // 700 KB original.
   return (
     <Image
       src="/repliva-logo.png"
       alt="Repliva"
-      width={1304}
-      height={1206}
+      width={48}
+      height={28}
       priority
-      className={cn('h-7 w-7 object-contain', className)}
+      className={cn('h-7 w-auto', className)}
     />
   );
 }
