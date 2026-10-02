@@ -20,7 +20,7 @@ import {
  * The in-app notification feed itself is server-side and always records
  * everything, so nothing is lost when a preference is off.
  */
-const PREFERENCE_KEY = 'unichat:notification-preferences';
+const PREFERENCE_KEY = 'app:notification-preferences';
 
 interface Preferences {
   newMessage: boolean;

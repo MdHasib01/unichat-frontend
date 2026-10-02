@@ -1,6 +1,41 @@
 import { headers } from 'next/headers';
-import { brandForHost, type Brand, type BrandId } from './brand';
+import type { Brand, BrandId } from './brand';
 import type { Legal } from './legal';
+
+// This module imports next/headers, so Next.js refuses to bundle it for the
+// browser: neither domain's brand or legal facts reach the other's visitors.
+
+/** Production, public, and the only domain used with Meta. */
+export const PRODUCTION_HOST = 'repliva.site';
+/** Internal testing only: Basic Auth, never indexed, never used with Meta. */
+export const INTERNAL_HOST = 'unichat.nuktatechnologies.com';
+
+const BRANDS: Record<BrandId, Brand> = {
+  unichat: {
+    id: 'unichat',
+    name: 'Unichat',
+    siteUrl: `https://${INTERNAL_HOST}`,
+    favicon: '/favicon.svg',
+    icon: '/unichat-icon-1024.png',
+    logo: { src: '/unichat-icon.svg', width: 28, height: 28, rounded: true },
+  },
+  repliva: {
+    id: 'repliva',
+    name: 'Repliva',
+    siteUrl: `https://${PRODUCTION_HOST}`,
+    favicon: '/repliva-favicon.png',
+    icon: '/app-icon-1024.png',
+    // The badge is wide (1182×691 source), so it keeps its own width at 28px.
+    logo: { src: '/repliva-logo.png', width: 48, height: 28, rounded: false },
+  },
+};
+
+/** Picks the brand for a Host header value such as "repliva.site:443". */
+export function brandForHost(host: string | null | undefined): Brand {
+  // X-Forwarded-Host may carry a list; the first entry is the original.
+  const hostname = (host ?? '').split(',')[0].trim().toLowerCase().replace(/:d+$/, '');
+  return hostname === INTERNAL_HOST ? BRANDS.unichat : BRANDS.repliva;
+}
 
 /**
  * The brand for the current request, for server components and metadata.
@@ -13,10 +48,7 @@ export async function getBrand(): Promise<Brand> {
 }
 
 // --- Legal facts per brand (see the Legal interface in lib/legal.ts) -------
-// They live here, not in lib/legal.ts: this module imports next/headers, so
-// Next.js refuses to bundle it for the browser. Client components get the
-// current brand's facts through BrandProvider instead, and the Repliva
-// identity never reaches pages served on the Unichat domain.
+// Client components get the current brand's facts through BrandProvider.
 
 const BUSINESS_EMAIL = 'support@repliva.site';
 

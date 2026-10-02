@@ -38,14 +38,15 @@ function buildSections(L: Legal): LegalSection[] {
           We set two cookies, and only after you sign in. They are strictly necessary to keep you
           signed in securely, so they cannot be switched off without breaking sign-in. Both are
           HTTP-only, which means scripts on the page cannot read them. In production they are also
-          marked <code>Secure</code> and <code>SameSite=Strict</code>.
+          marked <code>Secure</code> and <code>SameSite=Strict</code>, and they are host-only: the
+          browser sends them back to this website only, never to any other domain.
         </p>
         <LegalTable
           columns={['Name', 'Purpose', 'Duration']}
           rows={[
-            [<code key="at">unichat_at</code>, 'Short-lived access token that proves you are signed in.', '1 hour'],
+            [<code key="at">__Host-at</code>, 'Short-lived access token that proves you are signed in.', '1 hour'],
             [
-              <code key="rt">unichat_rt</code>,
+              <code key="rt">__Host-rt</code>,
               'Refresh token that renews your session without asking for your password again. Signing out, or revoking the session under Your account → Security, invalidates it.',
               '30 days',
             ],
@@ -64,9 +65,9 @@ function buildSections(L: Legal): LegalSection[] {
           columns={['Key', 'Purpose', 'Duration']}
           rows={[
             [<code key="t">theme</code>, 'Your light or dark theme choice.', 'Until you clear it'],
-            [<code key="c">unichat:sidebar-collapsed</code>, 'Whether the sidebar is collapsed.', 'Until you clear it'],
-            [<code key="g">unichat:sidebar-groups</code>, 'Which sidebar sections are expanded.', 'Until you clear it'],
-            [<code key="n">unichat:notification-preferences</code>, 'Your in-app notification settings on this device.', 'Until you clear it'],
+            [<code key="c">app:sidebar-collapsed</code>, 'Whether the sidebar is collapsed.', 'Until you clear it'],
+            [<code key="g">app:sidebar-groups</code>, 'Which sidebar sections are expanded.', 'Until you clear it'],
+            [<code key="n">app:notification-preferences</code>, 'Your in-app notification settings on this device.', 'Until you clear it'],
           ]}
         />
       </>
@@ -80,7 +81,7 @@ function buildSections(L: Legal): LegalSection[] {
         <p>
           Businesses can add the {P} chat widget to their own websites. The widget sets <strong>no
           cookies</strong>. It stores one localStorage entry on that website (named{' '}
-          <code>unichat:</code> followed by the widget’s key). The entry holds a signed, random visitor
+          <code>chatwidget:</code> followed by the widget’s key). The entry holds a signed, random visitor
           token, valid for up to 12 months, so the visitor’s conversation continues when they move
           between pages or come back later. It also remembers whether the visitor dismissed the
           pre-chat form. The token contains no name or contact details.

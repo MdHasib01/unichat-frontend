@@ -652,7 +652,7 @@ function ActionFields({
           type="url"
           value={action.url}
           onChange={(event) => onChange({ url: event.target.value })}
-          placeholder="https://your-system.example.com/unichat-hook"
+          placeholder="https://your-system.example.com/webhook"
         />
       );
 

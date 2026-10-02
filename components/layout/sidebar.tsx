@@ -11,8 +11,8 @@ import { Badge, Tooltip } from '@/components/ui/primitives';
 import { useSession } from '@/hooks/use-session';
 import { useCrownDialog } from './crown-dialog';
 
-const COLLAPSE_STORAGE_KEY = 'unichat:sidebar-collapsed';
-const GROUPS_STORAGE_KEY = 'unichat:sidebar-groups';
+const COLLAPSE_STORAGE_KEY = 'app:sidebar-collapsed';
+const GROUPS_STORAGE_KEY = 'app:sidebar-groups';
 
 interface SidebarProps {
   unreadCount?: number;

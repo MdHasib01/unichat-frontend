@@ -136,7 +136,7 @@ export function TrainingManager() {
       const url = URL.createObjectURL(response.data as Blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `unichat-training-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `training-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {

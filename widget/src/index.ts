@@ -1,27 +1,27 @@
 /**
- * Unichat website chat widget.
+ * Website chat widget.
  *
- *   <script async src="https://YOUR-UNICHAT/widget/v1.js" data-unichat-key="wk_…"></script>
+ *   <script async src="https://YOUR-DOMAIN/widget/v1.js" data-widget-key="wk_…"></script>
  *
  * Dependency-free and rendered in a Shadow DOM. Replies arrive over
  * Server-Sent Events, with polling as the fallback. All text is inserted with
  * textContent — nothing from the network is ever parsed as HTML.
  *
  * JS API (callable before the script loads, calls are queued):
- *   Unichat('open' | 'close' | 'toggle' | 'show' | 'hide')
- *   Unichat('identify', { name, email, phone })
+ *   ChatWidget('open' | 'close' | 'toggle' | 'show' | 'hide')
+ *   ChatWidget('identify', { name, email, phone })
  */
 import { ApiError, WidgetApi } from './api';
 import { STYLES } from './styles';
 import type { ChatMessage, PreChatField, VisitorState, WidgetConfig } from './types';
 
 type Command = 'open' | 'close' | 'toggle' | 'show' | 'hide' | 'identify';
-type UnichatFn = ((command: Command, arg?: unknown) => void) & { q?: IArguments[] | unknown[][] };
+type WidgetFn = ((command: Command, arg?: unknown) => void) & { q?: IArguments[] | unknown[][] };
 
 declare global {
   interface Window {
-    Unichat?: UnichatFn;
-    __unichatWidget?: boolean;
+    ChatWidget?: WidgetFn;
+    __chatWidgetLoaded?: boolean;
   }
 }
 
@@ -107,18 +107,6 @@ function timeLabel(iso: string): string {
   }
 }
 
-/**
- * The product name for "Powered by", from the domain serving the widget:
- * Unichat on its own domain, Repliva everywhere else (mirrors lib/brand.ts).
- */
-function brandNameFor(apiBase: string): string {
-  try {
-    return new URL(apiBase).hostname.toLowerCase() === 'unichat.nuktatechnologies.com' ? 'Unichat' : 'Repliva';
-  } catch {
-    return 'Repliva';
-  }
-}
-
 // ---------------------------------------------------------------------------
 // persistence (localStorage can throw in private modes / blocked storage)
 // ---------------------------------------------------------------------------
@@ -130,7 +118,7 @@ interface Stored {
 
 function load(key: string): Stored {
   try {
-    return JSON.parse(localStorage.getItem(`unichat:${key}`) || '{}') as Stored;
+    return JSON.parse(localStorage.getItem(`chatwidget:${key}`) || '{}') as Stored;
   } catch {
     return {};
   }
@@ -138,7 +126,7 @@ function load(key: string): Stored {
 
 function save(key: string, value: Stored) {
   try {
-    localStorage.setItem(`unichat:${key}`, JSON.stringify(value));
+    localStorage.setItem(`chatwidget:${key}`, JSON.stringify(value));
   } catch {
     /* storage unavailable — the session lasts for this page only */
   }
@@ -179,6 +167,8 @@ class ChatWidget {
   private readonly subtitleEl: HTMLDivElement;
   private readonly content: HTMLDivElement;
   private readonly brand: HTMLDivElement;
+  /** "Powered by" product name; the serving domain sends it with the config. */
+  private readonly brandName = h('strong');
   private body: HTMLDivElement | null = null;
   private typingEl: HTMLDivElement | null = null;
   private input: HTMLTextAreaElement | null = null;
@@ -186,7 +176,7 @@ class ChatWidget {
 
   constructor(
     private readonly key: string,
-    apiBase: string,
+    private readonly apiBase: string,
     private readonly preview: boolean,
   ) {
     this.api = new WidgetApi(apiBase, key);
@@ -194,7 +184,7 @@ class ChatWidget {
     this.api.token = this.stored.token ?? null;
 
     const host = h('div');
-    host.id = 'unichat-widget';
+    host.id = 'chat-widget';
     const shadow = host.attachShadow({ mode: 'open' });
     const style = h('style');
     style.textContent = STYLES;
@@ -222,7 +212,7 @@ class ChatWidget {
     this.content = h('div');
     this.content.style.cssText = 'flex:1;display:flex;flex-direction:column;min-height:0;';
     this.brand = h('div', 'brand');
-    this.brand.append('Powered by ', h('strong', undefined, brandNameFor(apiBase)));
+    this.brand.append('Powered by ', this.brandName);
     this.panel.append(header, this.content, this.brand);
 
     this.launcher = h('button', 'launcher');
@@ -252,7 +242,7 @@ class ChatWidget {
     try {
       this.applyConfig(await this.api.config());
     } catch (error) {
-      console.warn('[Unichat] chat widget unavailable:', error instanceof Error ? error.message : error);
+      console.warn('[Chat widget] unavailable:', error instanceof Error ? error.message : error);
       return;
     }
 
@@ -275,7 +265,7 @@ class ChatWidget {
     window.addEventListener('message', (event) => {
       if (event.source !== window.parent) return;
       const data = event.data as { type?: string; config?: WidgetConfig; view?: 'chat' | 'form'; open?: boolean };
-      if (data?.type !== 'unichat:preview' || !data.config) return;
+      if (data?.type !== 'chatwidget:preview' || !data.config) return;
       this.applyConfig(data.config);
       this.view = data.view ?? 'chat';
       this.visitor = { profile: { name: null, email: null, phone: null }, needsPreChat: false, hasConversation: true };
@@ -283,7 +273,16 @@ class ChatWidget {
       else this.setOpen(true);
       this.renderContent();
     });
-    window.parent?.postMessage({ type: 'unichat:preview-ready' }, '*');
+    window.parent?.postMessage({ type: 'chatwidget:preview-ready' }, '*');
+  }
+
+  /** Our own uploads arrive site-relative; resolve them against the domain serving the widget. */
+  private assetUrl(url: string): string {
+    try {
+      return new URL(url, this.apiBase).href;
+    } catch {
+      return url;
+    }
   }
 
   private applyConfig(config: WidgetConfig) {
@@ -306,14 +305,16 @@ class ChatWidget {
     this.avatar.textContent = '';
     if (config.logoUrl) {
       const img = h('img');
-      img.src = config.logoUrl;
+      img.src = this.assetUrl(config.logoUrl);
       img.alt = '';
       this.avatar.append(img);
     } else {
       this.avatar.textContent = (config.businessName || config.title).trim().charAt(0).toUpperCase();
     }
 
-    this.brand.style.display = config.showBranding ? '' : 'none';
+    // Config pushed over the live stream carries no brand name; keep the last one.
+    if (config.brandName) this.brandName.textContent = config.brandName;
+    this.brand.style.display = config.showBranding && this.brandName.textContent ? '' : 'none';
     this.renderLauncher();
     if (this.isOpen) this.renderContent();
   }
@@ -326,7 +327,7 @@ class ChatWidget {
       this.launcher.append(icon('close'));
     } else if (config?.launcherIcon === 'logo' && config.logoUrl) {
       const img = h('img');
-      img.src = config.logoUrl;
+      img.src = this.assetUrl(config.logoUrl);
       img.alt = '';
       this.launcher.append(img);
     } else {
@@ -850,21 +851,21 @@ class ChatWidget {
 const loadingScript = document.currentScript as HTMLScriptElement | null;
 
 function boot() {
-  if (window.__unichatWidget) return;
+  if (window.__chatWidgetLoaded) return;
 
-  const script = loadingScript ?? document.querySelector<HTMLScriptElement>('script[data-unichat-key]');
-  const key = script?.dataset.unichatKey;
+  const script = loadingScript ?? document.querySelector<HTMLScriptElement>('script[data-widget-key]');
+  const key = script?.dataset.widgetKey;
   if (!script || !key) {
-    console.warn('[Unichat] add data-unichat-key="…" to the widget <script> tag');
+    console.warn('[Chat widget] add data-widget-key="…" to the widget <script> tag');
     return;
   }
-  window.__unichatWidget = true;
+  window.__chatWidgetLoaded = true;
 
   const apiBase = (script.dataset.api || new URL(script.src, location.href).origin).replace(/\/$/, '');
   const widget = new ChatWidget(key, apiBase, script.dataset.preview === 'true');
 
-  const queued = (window.Unichat?.q ?? []) as unknown[][];
-  const api: UnichatFn = (command: Command, arg?: unknown) => {
+  const queued = (window.ChatWidget?.q ?? []) as unknown[][];
+  const api: WidgetFn = (command: Command, arg?: unknown) => {
     switch (command) {
       case 'open':
         void widget.open();
@@ -885,10 +886,10 @@ function boot() {
         void widget.identify((arg ?? {}) as Partial<Record<PreChatField, string>>).catch(() => undefined);
         break;
       default:
-        console.warn('[Unichat] unknown command', command);
+        console.warn('[Chat widget] unknown command', command);
     }
   };
-  window.Unichat = api;
+  window.ChatWidget = api;
 
   void widget.start().then(() => {
     for (const call of queued) api(...(Array.from(call) as [Command, unknown]));

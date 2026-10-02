@@ -4,7 +4,7 @@
 //   node scripts/build-widget.mjs --watch  rebuild on change (development)
 //
 // Next serves everything in public/, so the script is available at
-// https://<your-unichat>/widget/v1.js with no extra server.
+// https://<your-domain>/widget/v1.js with no extra server.
 import { build, context } from 'esbuild';
 import { gzipSync } from 'node:zlib';
 import { readFileSync } from 'node:fs';
@@ -23,7 +23,7 @@ const options = {
   minify: !watch,
   sourcemap: watch ? 'inline' : false,
   legalComments: 'none',
-  banner: { js: '/* Unichat website chat widget */' },
+  banner: { js: '/* Website chat widget */' },
   logLevel: 'info',
 };
 

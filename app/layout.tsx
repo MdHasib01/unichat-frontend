@@ -30,10 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
         'Answer Facebook Messenger, Instagram Direct, WhatsApp Business and website chat messages from one shared inbox.',
       images: [{ url: brand.icon, width: 1024, height: 1024, alt: brand.name }],
     },
-    // Meta Business Manager → Brand safety → Domains → "Meta-tag verification".
-    // DNS TXT verification needs no code; this is only for the meta-tag route.
-    ...(process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION
-      ? { other: { 'facebook-domain-verification': process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION } }
+    // The internal testing domain is never indexed (it also sends
+    // X-Robots-Tag and a Disallow-all robots.txt — see middleware.ts).
+    ...(brand.id === 'unichat' ? { robots: { index: false, follow: false } } : {}),
+    // Meta Business Manager → Brand safety → Domains → "Meta-tag verification",
+    // production only. Read at request time (this layout renders per request),
+    // so setting FACEBOOK_DOMAIN_VERIFICATION on the server needs no rebuild.
+    ...(brand.id === 'repliva' && process.env.FACEBOOK_DOMAIN_VERIFICATION
+      ? { other: { 'facebook-domain-verification': process.env.FACEBOOK_DOMAIN_VERIFICATION } }
       : {}),
   };
 }

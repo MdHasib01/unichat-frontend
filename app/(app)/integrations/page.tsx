@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { get, post, del } from '@/services/api';
-import { BrandName } from '@/components/brand-provider';
+import { BrandName, useBrand } from '@/components/brand-provider';
 import { queryKeys } from '@/lib/query-keys';
 import { formatDateTime, timeAgo } from '@/lib/utils';
 import { useSession } from '@/hooks/use-session';
@@ -68,6 +68,9 @@ function IntegrationsContent() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const { can } = useSession();
+  // Meta is only available on production; the internal testing domain has no
+  // Meta UI, and its /api/integrations/meta/* routes answer 404.
+  const metaAvailable = useBrand().id === 'repliva';
 
   const [selectOpen, setSelectOpen] = React.useState(false);
   const [simulateOpen, setSimulateOpen] = React.useState(false);
@@ -123,7 +126,7 @@ function IntegrationsContent() {
         title="Integrations"
         description="Connect the channels your customers already use. Access tokens are encrypted at rest and never sent to your browser."
         actions={
-          manage ? (
+          manage && metaAvailable ? (
             connected ? (
               <>
                 {data?.mockMode ? (
@@ -147,7 +150,7 @@ function IntegrationsContent() {
         }
       />
 
-      {data?.mockMode ? (
+      {data?.mockMode && metaAvailable ? (
         <Card className="mb-4 border-warning/30 bg-warning/5">
           <CardContent className="flex items-start gap-3 p-4">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
@@ -172,6 +175,7 @@ function IntegrationsContent() {
         </div>
       ) : (
         <div className="space-y-4">
+          {metaAvailable ? (
           <Card>
             <CardHeader className="flex-row items-start justify-between space-y-0">
               <div>
@@ -243,6 +247,16 @@ function IntegrationsContent() {
               </div>
             </CardContent>
           </Card>
+          ) : (
+            <Card>
+              <CardContent className="flex items-start gap-3 p-4 text-sm">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <p className="text-muted-foreground">
+                  Facebook, Instagram and WhatsApp channels are not available on this domain.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
@@ -256,9 +270,13 @@ function IntegrationsContent() {
                 <EmptyState
                   icon={Plug}
                   title="No channels connected"
-                  description="Connect Meta and choose the Pages, Instagram accounts and WhatsApp numbers you want in your inbox."
+                  description={
+                    metaAvailable
+                      ? 'Connect Meta and choose the Pages, Instagram accounts and WhatsApp numbers you want in your inbox.'
+                      : 'Add a website chat below to start receiving messages.'
+                  }
                   action={
-                    manage ? (
+                    manage && metaAvailable ? (
                       <Button onClick={() => connect.mutate()} loading={connect.isPending}>
                         {data?.mockMode ? 'Connect demo channels' : 'Connect Meta'}
                       </Button>

@@ -547,14 +547,14 @@ export function WidgetSettings({ widgetId }: { widgetId: string }) {
               <CardContent>
                 <CodeBlock
                   code={`// Open, close or toggle the chat
-Unichat('open');
-Unichat('close');
+ChatWidget('open');
+ChatWidget('close');
 
 // Hide the bubble on pages where you don't want it
-Unichat('hide');
+ChatWidget('hide');
 
 // Already know who the visitor is? Skip the pre-chat form.
-Unichat('identify', { name: 'Jane Doe', email: 'jane@example.com' });`}
+ChatWidget('identify', { name: 'Jane Doe', email: 'jane@example.com' });`}
                 />
               </CardContent>
             </Card>

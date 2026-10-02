@@ -14,6 +14,8 @@ export interface WidgetConfig {
   inputPlaceholder: string;
   offlineMessage: string | null;
   showBranding: boolean;
+  /** Product name for "Powered by", set by the domain serving the widget. */
+  brandName?: string;
   businessName: string;
   isOnline: boolean;
   preChat: { mode: 'OFF' | 'OPTIONAL' | 'REQUIRED'; fields: PreChatField[] };

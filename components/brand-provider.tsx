@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { BRANDS, type Brand } from '@/lib/brand';
+import type { Brand } from '@/lib/brand';
 import type { Legal } from '@/lib/legal';
 
-const BrandContext = React.createContext<Brand>(BRANDS.repliva);
+const BrandContext = React.createContext<Brand | null>(null);
 const LegalContext = React.createContext<Legal | null>(null);
 
 /**
@@ -29,7 +29,9 @@ export function BrandProvider({
 }
 
 export function useBrand(): Brand {
-  return React.useContext(BrandContext);
+  const brand = React.useContext(BrandContext);
+  if (!brand) throw new Error('useBrand() must be used inside BrandProvider');
+  return brand;
 }
 
 /** The legal facts for the visitor's brand (lib/legal.ts). */

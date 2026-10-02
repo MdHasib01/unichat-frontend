@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import type { ChatWidget } from '@/types';
+import { useBrand } from '@/components/brand-provider';
 
 export type PreviewDraft = Pick<
   ChatWidget,
@@ -40,6 +41,7 @@ export function WidgetPreview({
   open: boolean;
 }) {
   const frame = React.useRef<HTMLIFrameElement>(null);
+  const brandName = useBrand().name;
   const [ready, setReady] = React.useState(false);
 
   const srcDoc = React.useMemo(() => {
@@ -54,13 +56,13 @@ export function WidgetPreview({
 </style></head><body>
 <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
 <div class="hero"></div><div class="line" style="width:60%"></div><div class="line" style="width:80%"></div><div class="line" style="width:40%"></div>
-<script src="${origin}/widget/v1.js" data-unichat-key="preview" data-preview="true"></script>
+<script src="${origin}/widget/v1.js" data-widget-key="preview" data-preview="true"></script>
 </body></html>`;
   }, []);
 
   React.useEffect(() => {
     const onMessage = (event: MessageEvent) => {
-      if (event.source === frame.current?.contentWindow && event.data?.type === 'unichat:preview-ready') {
+      if (event.source === frame.current?.contentWindow && event.data?.type === 'chatwidget:preview-ready') {
         setReady(true);
       }
     };
@@ -72,20 +74,21 @@ export function WidgetPreview({
     if (!ready) return;
     frame.current?.contentWindow?.postMessage(
       {
-        type: 'unichat:preview',
+        type: 'chatwidget:preview',
         view,
         open,
         config: {
           key: 'preview',
           ...draft,
           businessName,
+          brandName,
           isOnline: online,
           preChat: { mode: draft.preChatMode, fields: draft.preChatFields },
         },
       },
       '*',
     );
-  }, [ready, draft, businessName, view, online, open]);
+  }, [ready, draft, businessName, brandName, view, online, open]);
 
   return (
     <iframe
