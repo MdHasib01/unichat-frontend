@@ -1,9 +1,9 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Bot, Inbox, ShieldCheck, Users, Workflow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LegalValue } from '@/components/legal/placeholder';
 import { SignedInRedirect } from '@/components/legal/signed-in-redirect';
-import { LEGAL } from '@/lib/legal';
+import { LEGAL, PHONE_HREF } from '@/lib/legal';
 import { getBrand } from '@/lib/brand-server';
 
 /**
@@ -12,6 +12,13 @@ import { getBrand } from '@/lib/brand-server';
  * does, who runs it and how to reach them — with no invented claims.
  */
 
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getBrand();
+  return {
+    title: { absolute: `${name} — one inbox for every customer conversation` },
+    description: `${name} is a shared inbox for businesses to read and reply to messages from their own customers on Facebook Messenger, Instagram Direct, WhatsApp Business and website chat. Operated by ${LEGAL.operatorName}, ${LEGAL.address}.`,
+  };
+}
 
 const FEATURES = [
   {
@@ -88,7 +95,7 @@ export default async function HomePage() {
               You connect only the Facebook Pages, Instagram accounts and WhatsApp numbers you manage,
               through Meta’s official APIs, and you can disconnect them at any time. We use the access
               you grant only to run your inbox, and we never sell your data or use it for advertising.
-              Read our <Link href="/meta" className="font-medium text-primary hover:underline">Meta Integration Disclosure</Link>,{' '}
+              Read about our <Link href="/meta-integration" className="font-medium text-primary hover:underline">Meta integration</Link>,{' '}
               <Link href="/privacy" className="font-medium text-primary hover:underline">Privacy Policy</Link> and{' '}
               <Link href="/data-deletion" className="font-medium text-primary hover:underline">Data Deletion Instructions</Link>.
             </p>
@@ -103,10 +110,15 @@ export default async function HomePage() {
         <div>
           <h2 className="text-base font-semibold text-foreground">About {LEGAL.operatorName}</h2>
           <p className="mt-2 leading-relaxed text-muted-foreground">
-            {P} is built and operated by {LEGAL.operatorName}.
+            {P} is built and operated by {LEGAL.operatorName}. Proprietor: {LEGAL.proprietor}.
           </p>
+          <p className="mt-2 leading-relaxed text-muted-foreground">{LEGAL.address}</p>
           <p className="mt-2 leading-relaxed text-muted-foreground">
-            <LegalValue value={LEGAL.registeredAddress} label="REGISTERED ADDRESS" />
+            {P} is{' '}
+            <Link href="/pricing" className="font-medium text-primary hover:underline">
+              free during beta
+            </Link>
+            .
           </p>
         </div>
         <div>
@@ -117,6 +129,13 @@ export default async function HomePage() {
               {LEGAL.supportEmail}
             </a>
           </p>
+          <p className="mt-2 leading-relaxed text-muted-foreground">
+            Phone:{' '}
+            <a href={PHONE_HREF} className="font-medium text-primary hover:underline">
+              {LEGAL.phone}
+            </a>
+          </p>
+          <p className="mt-2 leading-relaxed text-muted-foreground">{LEGAL.businessHours}</p>
           <p className="mt-2">
             <Link href="/contact" className="font-medium text-primary hover:underline">
               All contact options →

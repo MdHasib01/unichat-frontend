@@ -127,7 +127,9 @@ export function MessageThread({ conversationId }: { conversationId: string }) {
             <MessageBubble
               message={message}
               previous={previous}
-              onTeach={canTrain ? () => teachFrom(index) : undefined}
+              // Meta Platform Data is never AI training material (see /privacy#ai),
+              // so only website chat messages can be taught from.
+              onTeach={canTrain && message.platform === 'WEBCHAT' ? () => teachFrom(index) : undefined}
               onRetry={retry.isPending ? undefined : () => retry.mutate(message.id)}
             />
           </React.Fragment>

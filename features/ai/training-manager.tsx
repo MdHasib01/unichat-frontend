@@ -54,7 +54,7 @@ import type {
 
 const SOURCE_LABELS: Record<TrainingSource, string> = {
   MANUAL: 'Written',
-  INBOX: 'From inbox',
+  INBOX: 'From website chat',
   IMPORT: 'Imported',
 };
 
@@ -240,7 +240,7 @@ export function TrainingManager() {
       <div className="grid gap-3 sm:grid-cols-4">
         <StatCard icon={MessageSquareQuote} label="Approved answers" value={stats?.active ?? 0} />
         <StatCard icon={Pencil} label="Written" value={stats?.manual ?? 0} />
-        <StatCard icon={Inbox} label="Taught from inbox" value={stats?.inbox ?? 0} />
+        <StatCard icon={Inbox} label="Taught from website chat" value={stats?.inbox ?? 0} />
         <StatCard icon={FileJson} label="Imported" value={stats?.imported ?? 0} />
       </div>
 
@@ -250,7 +250,8 @@ export function TrainingManager() {
           <p className="mt-0.5 text-muted-foreground">
             When a customer asks exactly one of these questions, the approved answer is sent as written — instantly,
             with no AI cost. For similar questions, the closest answers guide the assistant’s reply. Teach new answers
-            from any conversation with the <strong>Teach AI</strong> button in the inbox.
+            from website chat conversations with the <strong>Teach AI</strong> button in the inbox.
+            Messages from Facebook, Instagram and WhatsApp cannot be used as training material.
           </p>
         </CardContent>
       </Card>
@@ -282,7 +283,7 @@ export function TrainingManager() {
         onPageChange={setPage}
         search={{ value: search, onChange: setSearch, placeholder: 'Search questions and answers' }}
         emptyTitle="No approved answers yet"
-        emptyDescription="Add the questions customers ask most with the exact answer you want sent, import a JSON file of past chats, or teach answers straight from the inbox."
+        emptyDescription="Add the questions customers ask most with the exact answer you want sent, import a JSON file of past chats, or teach answers from website chat conversations in the inbox."
         emptyAction={
           train ? (
             <div className="flex gap-2">

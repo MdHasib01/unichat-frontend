@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
-import { LEGAL } from '@/lib/legal';
+import { LEGAL, PHONE_HREF } from '@/lib/legal';
 import { getBrand } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
@@ -172,6 +172,14 @@ const sections: LegalSection[] = [
           you cannot reach the business, email us with the business’s name and the platform you
           used, and we will pass on your request and help the business respond.
         </p>
+        <p>
+          <strong>Response time:</strong> we acknowledge within {LEGAL.acknowledgeHours} hours and
+          complete verified requests within {LEGAL.deletionDays} days.
+        </p>
+        <p>
+          You can also call us on <a href={PHONE_HREF}>{LEGAL.phone}</a>. We will ask you to confirm
+          the request by email so we have a written record of it.
+        </p>
         <p>We may ask you to confirm your identity before deleting anything, to protect your data from fraudulent requests.</p>
       </>
     ),
@@ -181,7 +189,10 @@ const sections: LegalSection[] = [
     title: 'Timing and what we keep',
     content: (
       <ul>
-        <li>We acknowledge requests promptly and complete verified deletion requests within {LEGAL.deletionDays} days.</li>
+        <li>
+          For email requests, we acknowledge within {LEGAL.acknowledgeHours} hours and complete
+          verified requests within {LEGAL.deletionDays} days.
+        </li>
         <li>Deleted data may remain in database backups until they rotate out (currently within 14 days). It is not restored into the live service.</li>
         <li>
           We keep a minimal record of each deletion request (reference, date, scope and outcome) so
@@ -199,11 +210,16 @@ const sections: LegalSection[] = [
     id: 'contact',
     title: 'Questions',
     content: (
-      <p>
-        Email <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a> or visit our{' '}
-        <Link href="/contact">Contact</Link> page. For more on how we handle data, see our{' '}
-        <Link href="/privacy">Privacy Policy</Link>.
-      </p>
+      <>
+        <p>
+          Email <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>, call{' '}
+          <a href={PHONE_HREF}>{LEGAL.phone}</a> or visit our <Link href="/contact">Contact</Link>{' '}
+          page. For more on how we handle data, see our <Link href="/privacy">Privacy Policy</Link>.
+        </p>
+        <p>
+          {LEGAL.operatorName} — Proprietor: {LEGAL.proprietor} · {LEGAL.address}
+        </p>
+      </>
     ),
   },
 ];
@@ -227,9 +243,13 @@ export default function DataDeletionPage() {
           </li>
           <li>
             <strong>Delete data</strong>: sign in and use <Link href="/delete-account">Delete account</Link>,
-            or email <a href={deletionMail}>{LEGAL.privacyEmail}</a>.
+            email <a href={deletionMail}>{LEGAL.privacyEmail}</a> or call{' '}
+            <a href={PHONE_HREF}>{LEGAL.phone}</a>. No sign-in is needed to send a request by email.
           </li>
-          <li>We complete verified deletion requests within {LEGAL.deletionDays} days.</li>
+          <li>
+            We acknowledge email requests within {LEGAL.acknowledgeHours} hours and complete verified
+            requests within {LEGAL.deletionDays} days.
+          </li>
         </ul>
       }
       sections={sections}

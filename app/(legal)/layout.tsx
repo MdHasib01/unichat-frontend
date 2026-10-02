@@ -19,6 +19,14 @@ export default async function LegalLayout({ children }: { children: React.ReactN
             <BrandWordmark />
           </Link>
           <div className="flex items-center gap-2">
+            <nav aria-label="Site" className="flex items-center gap-1">
+              <Button asChild size="sm" variant="ghost">
+                <Link href="/pricing">Pricing</Link>
+              </Button>
+              <Button asChild size="sm" variant="ghost" className="hidden md:inline-flex">
+                <Link href="/contact">Contact</Link>
+              </Button>
+            </nav>
             <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex">
               <Link href="/register">Create workspace</Link>
             </Button>

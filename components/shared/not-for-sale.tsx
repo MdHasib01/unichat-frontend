@@ -7,6 +7,7 @@ import { BrandName } from '@/components/brand-provider';
 import { Button } from '@/components/ui/button';
 import { Badge, Card } from '@/components/ui/primitives';
 import { CROWN_SERVICES } from '@/lib/navigation';
+import { LEGAL } from '@/lib/legal';
 
 /**
  * Landing page for a crown-marked module (spec sections 29 and 48).
@@ -76,7 +77,7 @@ export function NotForSale({ route }: { route: keyof typeof CROWN_SERVICES | str
 
           <Button asChild className="w-full sm:w-auto">
             <a
-              href={`mailto:sales@unichat.app?subject=${encodeURIComponent(`Interested in ${service.title}`)}`}
+              href={`mailto:${LEGAL.supportEmail}?subject=${encodeURIComponent(`Interested in ${service.title}`)}`}
             >
               <Mail className="h-4 w-4" />
               Register your interest

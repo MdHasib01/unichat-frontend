@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LegalPage, type LegalSection } from '@/components/legal/legal-page';
+import { BusinessDetails, LegalPage, type LegalSection } from '@/components/legal/legal-page';
 import { LegalValue } from '@/components/legal/placeholder';
 import { LEGAL } from '@/lib/legal';
 import { getBrand } from '@/lib/brand-server';
@@ -158,7 +158,7 @@ const sections: LegalSection[] = [
         <p>
           {P} may block or fail sends that a platform rejects, but it cannot guarantee your
           compliance. That responsibility stays with you. See our{' '}
-          <Link href="/meta">Meta Integration Disclosure</Link> for the permissions we request and why.
+          <Link href="/meta-integration">Meta Integration</Link> page for the permissions we request and why.
         </p>
       </>
     ),
@@ -398,15 +398,31 @@ const sections: LegalSection[] = [
     id: 'contact',
     title: 'Contact',
     content: (
-      <p>
-        Questions about these Terms: <a href={`mailto:${LEGAL.legalEmail}`}>{LEGAL.legalEmail}</a>.
-        Postal address: <LegalValue value={LEGAL.registeredAddress} label="REGISTERED ADDRESS" />. See
-        also our <Link href="/contact">Contact</Link> page.
-      </p>
+      <>
+        <p>Questions about these Terms? Contact us:</p>
+        <BusinessDetails />
+        <p>
+          See also our <Link href="/contact">Contact</Link> page.
+        </p>
+      </>
     ),
   },
 ];
 
 export default function TermsPage() {
-  return <LegalPage title="Terms of Service" sections={sections} />;
+  return (
+    <LegalPage
+      title="Terms of Service"
+      intro={
+        <>
+          <p>
+            {P} is provided by {LEGAL.operatorName}, a business operated by {LEGAL.proprietor} (sole
+            proprietor).
+          </p>
+          <BusinessDetails />
+        </>
+      }
+      sections={sections}
+    />
+  );
 }

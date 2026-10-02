@@ -1,4 +1,21 @@
-import { LEGAL } from '@/lib/legal';
+import { LEGAL, PHONE_HREF } from '@/lib/legal';
+
+/** The business identity as a list, for use inside policy prose. */
+export function BusinessDetails() {
+  return (
+    <ul>
+      <li>Business name: {LEGAL.operatorName}</li>
+      <li>Proprietor: {LEGAL.proprietor}</li>
+      <li>Address: {LEGAL.address}</li>
+      <li>
+        Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
+      </li>
+      <li>
+        Email: <a href={`mailto:${LEGAL.supportEmail}`}>{LEGAL.supportEmail}</a>
+      </li>
+    </ul>
+  );
+}
 
 export interface LegalSection {
   id: string;

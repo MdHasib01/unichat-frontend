@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LegalPage, LegalTable, type LegalSection } from '@/components/legal/legal-page';
 import { LegalValue } from '@/components/legal/placeholder';
-import { LEGAL } from '@/lib/legal';
+import { LEGAL, PHONE_HREF } from '@/lib/legal';
 import { getBrand } from '@/lib/brand-server';
 import { BrandName } from '@/components/brand-provider';
 
@@ -29,10 +29,23 @@ const sections: LegalSection[] = [
           widget, and answer the messages they receive from a single shared inbox.
         </p>
         <p>
-          {P} is operated by {LEGAL.operatorName} (
-          <LegalValue value={LEGAL.registrationNumber} label="LEGAL FORM AND REGISTRATION NUMBER" />
-          ), <LegalValue value={LEGAL.registeredAddress} label="REGISTERED ADDRESS" />. In this policy,
-          “{P}”, “we”, “us” and “our” mean {LEGAL.operatorName}.
+          The data controller is{' '}
+          <strong>
+            {LEGAL.operatorName}, operated by {LEGAL.proprietor} (sole proprietor)
+          </strong>
+          :
+        </p>
+        <ul>
+          <li>Address: {LEGAL.address}</li>
+          <li>
+            Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
+          </li>
+          <li>
+            Email: <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>
+          </li>
+        </ul>
+        <p>
+          In this policy, “{P}”, “we”, “us” and “our” mean {LEGAL.operatorName}.
         </p>
         <p>
           {P} is an independent service. It is not owned, operated, sponsored or endorsed by Meta
@@ -123,8 +136,10 @@ const sections: LegalSection[] = [
           </li>
           <li>
             <strong>AI assistant</strong>: the knowledge base content, business instructions and
-            example question-and-answer pairs you provide to train the assistant. Examples can come
-            from your own inbox if you choose to use a past reply as training material.
+            example question-and-answer pairs you provide for your assistant. You can also save an
+            answer from a website chat conversation as an example. Messages received from Facebook,
+            Instagram or WhatsApp can never be saved as AI training material (see{' '}
+            <a href="#ai">AI features and Meta Platform Data</a>).
           </li>
           <li>
             <strong>Automations and templates</strong>: the rules, message templates and saved replies
@@ -212,8 +227,8 @@ const sections: LegalSection[] = [
         <p>
           We use Meta data only to provide the messaging features you asked for. See{' '}
           <a href="#meta-commitments">our Meta Platform Data commitments</a> below and our{' '}
-          <Link href="/meta">Meta Integration Disclosure</Link> for the list of permissions and why
-          each is needed.
+          <Link href="/meta-integration">Meta Integration</Link> page for the list of permissions and
+          why each is needed.
         </p>
       </>
     ),
@@ -251,9 +266,8 @@ const sections: LegalSection[] = [
         </li>
         <li>
           <strong>Service improvement</strong>: understanding how the service performs (for example
-          error rates and delivery failures) so we can fix and improve it. We do not use your
-          conversations to train general-purpose AI models. Conversation text becomes training
-          material only when you add it to your own workspace’s assistant.
+          error rates and delivery failures) so we can fix and improve it. We never use your
+          conversations to train, fine-tune or improve any AI model.
         </li>
         <li>
           <strong>Legal compliance</strong>: meeting legal obligations, responding to lawful requests
@@ -300,16 +314,36 @@ const sections: LegalSection[] = [
   },
   {
     id: 'ai',
-    title: 'AI and automation features',
+    title: 'AI features and Meta Platform Data',
     content: (
       <>
         <p>
+          <strong>
+            Meta Platform Data is never used to train, fine-tune, or improve any AI model. When a
+            customer enables optional AI features, message content is sent to the selected AI
+            provider solely to generate a reply or reply suggestion for that customer, under the
+            provider’s no-training API terms, and is not retained by {LEGAL.operatorName} for any
+            other purpose.
+          </strong>
+        </p>
+        <p>
           AI replies and suggestions are optional and are configured per workspace. When they are
-          enabled, the relevant conversation history, the customer’s latest message and matching
-          passages from your knowledge base are sent to the AI provider selected for your workspace
-          (Anthropic or OpenAI) to generate a response. If OpenAI is selected, knowledge base text may
-          also be sent to OpenAI to create search embeddings. When no external AI provider is
+          enabled, the relevant conversation history, the latest message and matching passages from
+          the workspace’s knowledge base are sent to the AI provider selected for that workspace
+          (Anthropic or OpenAI) to generate the reply. To find matching passages, the latest message
+          may also be turned into a numeric search embedding. We cache that embedding, without the
+          message text, for up to 24 hours for this purpose only. When no external AI provider is
           configured, a built-in assistant runs entirely on our own servers.
+        </p>
+        <p>
+          <strong>“AI training materials”</strong> means only knowledge-base content that our
+          customer adds to its own workspace itself: knowledge articles, documents, website pages
+          and product details, question-and-answer examples it writes or imports, and answers it
+          saves from its own website chat conversations. It never includes Meta Platform Data.{' '}
+          {P} does not let messages received from Facebook, Instagram or WhatsApp be saved as
+          training material. If OpenAI is selected, training material may be sent to OpenAI to
+          create search embeddings for that workspace’s assistant. It is not used to train any
+          model.
         </p>
         <p>
           AI-generated and automated messages are sent on your behalf. You decide whether they are
@@ -370,15 +404,18 @@ const sections: LegalSection[] = [
     title: 'Meta Platform Data commitments',
     content: (
       <>
-        <p>For data we receive from Meta’s platforms:</p>
+        <p>For data we receive from Meta’s platforms (“Meta Platform Data”):</p>
         <ul>
           <li>We use it only to provide the messaging features you have enabled in {P}.</li>
           <li>
-            We do not sell, license or rent it, and we do not use it for advertising, profiling,
-            data brokering or building data sets unrelated to your use of {P}.
+            Meta Platform Data is not sold, not used for advertising, and not shared except with the
+            processors listed in <a href="#sharing">How we share information</a>. We also do not
+            license or rent it, or use it for profiling, data brokering or building data sets
+            unrelated to your use of {P}.
           </li>
           <li>
-            We share it only with the service providers listed above, and only to operate {P}.
+            It is never used to train, fine-tune or improve any AI model (see{' '}
+            <a href="#ai">AI features and Meta Platform Data</a>).
           </li>
           <li>Access tokens are encrypted at rest (AES-256-GCM) and are never shown in the app.</li>
           <li>
@@ -557,11 +594,21 @@ const sections: LegalSection[] = [
     title: 'Contact us',
     content: (
       <>
-        <p>
-          For privacy questions or requests, email{' '}
-          <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>. You can also reach us by
-          post at <LegalValue value={LEGAL.registeredAddress} label="REGISTERED ADDRESS" />.
-        </p>
+        <p>For privacy questions or requests, contact the data controller:</p>
+        <ul>
+          <li>
+            <strong>
+              {LEGAL.operatorName}, operated by {LEGAL.proprietor} (sole proprietor)
+            </strong>
+          </li>
+          <li>Address: {LEGAL.address}</li>
+          <li>
+            Phone: <a href={PHONE_HREF}>{LEGAL.phone}</a>
+          </li>
+          <li>
+            Email: <a href={`mailto:${LEGAL.privacyEmail}`}>{LEGAL.privacyEmail}</a>
+          </li>
+        </ul>
         <p>
           More ways to reach us are on our <Link href="/contact">Contact</Link> page.
         </p>
@@ -585,7 +632,10 @@ export default function PrivacyPolicyPage() {
         <ul>
           <li>We store the messages and contacts from the accounts you connect, so your team can answer them in one inbox.</li>
           <li>We use Meta data only to provide that inbox. We never sell it or use it for ads.</li>
-          <li>AI features are optional. When enabled, relevant messages are sent to the AI provider you choose.</li>
+          <li>
+            AI features are optional. When enabled, relevant messages are sent to the AI provider you
+            choose, only to generate replies. Meta Platform Data is never used to train any AI model.
+          </li>
           <li>
             You can disconnect accounts at any time and ask us to delete your data. See{' '}
             <Link href="/data-deletion">Data Deletion</Link>.

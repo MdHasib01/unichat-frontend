@@ -9,7 +9,6 @@ import {
   Inbox,
   LayoutDashboard,
   Megaphone,
-  MessageSquareShare,
   MessagesSquare,
   Mic,
   Package,
@@ -72,7 +71,6 @@ export const NAVIGATION: NavItem[] = [
       { label: 'AdsFlow', href: '/marketing/ads-flow', icon: Rocket, crown: true },
       { label: 'Creative Studio', href: '/marketing/creative-studio', icon: Wand2, crown: true },
       { label: 'Ad Launcher', href: '/marketing/ad-launcher', icon: Sparkles, crown: true },
-      { label: 'Broadcast', href: '/marketing/broadcast', icon: MessageSquareShare, crown: true },
     ],
   },
   {
@@ -91,7 +89,7 @@ export const NAVIGATION: NavItem[] = [
   { label: 'Help', href: '/help', icon: BadgeHelp },
 ];
 
-/** The five services that are visible but not currently for sale. */
+/** The services that are visible but not currently for sale. */
 export const CROWN_SERVICES: Record<string, { title: string; description: string }> = {
   '/calls/ai': {
     title: 'AI Calls',
@@ -110,11 +108,6 @@ export const CROWN_SERVICES: Record<string, { title: string; description: string
   '/marketing/ad-launcher': {
     title: 'Ad Launcher',
     description: 'Publish campaigns straight to connected ad accounts and track results alongside your conversations.',
-  },
-  '/marketing/broadcast': {
-    title: 'Broadcast',
-    description:
-      'Send approved template campaigns to opted-in customers across Messenger, Instagram and WhatsApp.',
   },
 };
 
