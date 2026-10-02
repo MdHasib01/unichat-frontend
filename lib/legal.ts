@@ -33,13 +33,14 @@ export const LEGAL = {
   governingLaw: 'the laws of Bangladesh' as string | null,
   jurisdictionCourts: 'the courts of Jashore, Bangladesh' as string | null,
 
+  /** The company hosting the servers and database. */
+  hostingProvider: 'Database Mart (databasemart.com)' as string | null,
+  /** Where the servers are; reads as "Our servers are located in …". */
+  hostingRegion: 'the United States' as string | null,
+
   // --- Not yet provided --------------------------------------------------
   /** Legal form and registration, e.g. "Repliva Ltd, company no. 12345678". */
   registrationNumber: null as string | null,
-  /** The company hosting the servers and database. */
-  hostingProvider: 'Database Mart (databasemart.com)' as string | null,
-  /** Where the servers are, e.g. "Germany (EU)". */
-  hostingRegion: null as string | null,
 } as const;
 
 /**

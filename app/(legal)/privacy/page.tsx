@@ -497,11 +497,12 @@ const sections: LegalSection[] = [
     title: 'International data transfers',
     content: (
       <p>
-        Our servers are located in <LegalValue value={LEGAL.hostingRegion} label="HOSTING REGION" />.
-        Meta, Anthropic and OpenAI may process data in the United States and other countries. Where
-        personal data from the EEA or UK is transferred to a country without an adequacy decision, we
-        rely on appropriate safeguards such as the European Commission’s Standard Contractual Clauses
-        offered by those providers.
+        Our servers are located in <LegalValue value={LEGAL.hostingRegion} label="HOSTING REGION" />,
+        and the service is operated and supported from Bangladesh, so your information is processed in
+        both countries. Meta, Anthropic and OpenAI may also process data in the United States and other
+        countries. Where personal data from the EEA or UK is transferred to a country without an
+        adequacy decision, we rely on appropriate safeguards such as the European Commission’s Standard
+        Contractual Clauses.
       </p>
     ),
   },
