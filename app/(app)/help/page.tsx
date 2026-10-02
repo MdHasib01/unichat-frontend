@@ -305,7 +305,7 @@ export default function HelpPage() {
           </CardTitle>
           <CardDescription>
             Send us the details and we will pick it up. Mentioning your workspace name helps us find
-            it quickly.
+            it quickly. {LEGAL.businessHours}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
