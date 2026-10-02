@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { name } = await getBrand();
   return {
     title: 'Contact',
-    description: `Contact ${LEGAL.operatorName}, the business behind ${name}: proprietor, postal address, phone, email and support hours.`,
+    description: `Contact ${LEGAL.operatorName} (${name}): proprietor ${LEGAL.proprietor}, postal address, phone, email and support hours.`,
   };
 }
 
